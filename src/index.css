@@ -1,13 +1,105 @@
-body {
+body,
+h1,
+h2,
+h3,
+p {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  font-family: "Montserrat", Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333333;
+}
+
+/* Header styles */
+header {
+  background-color: #008080;
+  padding: 1rem;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* Navigation styles */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: #004d4d;
+  padding: 0.5rem;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+nav a:hover {
+  background-color: #00b3b3;
+  border-radius: 5px;
+}
+
+/* Main content area */
+main {
+  padding: 2rem;
+}
+
+/* Background styles */
+.custom-bg {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* Text color styles */
+.text-color {
+  color: #063659;
+}
+
+.text-color1 {
+  color: #5cb85c;
+}
+
+/* Border color styles */
+.border-color {
+  border-color: #0d0505;
+}
+
+/* Custom background text styles */
+.custom-bg-text {
+  background-color: #5cb85c;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+/* Background color styles */
+.bg-color {
+  background-color: #063659;
+  color: #ffffff;
+  padding: 1rem;
+  text-align: left;
+}
+
+/* Rounded card styles */
+.rounded-card {
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form card styles */
+.form-card {
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Card styles */
+.card {
+  transition: transform 0.2s ease;
+}
+
+.card:hover .product-card {
+  transform: scale(1.2);
 }
