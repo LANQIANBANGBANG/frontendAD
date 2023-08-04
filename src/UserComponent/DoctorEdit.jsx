@@ -3,10 +3,12 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { GENDERS, SPECIALISTS } from "../utils/Constant";
+import { USER_API_URL } from "../config/config";
 
 export const DoctorEdit = () => {
   const { id: doctorId } = useParams();
   const [doctor, setDoctor] = useState({
+    id: doctorId,
     firstName: "",
     lastName: "",
     emailId: "",
@@ -16,15 +18,15 @@ export const DoctorEdit = () => {
     age: "",
     gender: "",
     specialist: "",
+    role: "DOCTOR",
   });
 
   useEffect(() => {
     const fetchDoctorData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/doctor/${doctorId}`
-        );
-        const doctorData = response.data;
+        const response = await axios.get(`${USER_API_URL}/${doctorId}`);
+        const doctorData = response.data.data.user;
+        console.log("fetchresponse: " + JSON.stringify(doctorData));
         setDoctor(doctorData);
       } catch (error) {
         console.error("Error fetching doctor data:", error);
@@ -40,36 +42,47 @@ export const DoctorEdit = () => {
     setDoctor({ ...doctor, [name]: value });
   };
 
-  const updateDoctor = (event) => {
+  const updateDoctor = async (event) => {
     event.preventDefault();
+    console.log(doctor);
 
-    const formData = new FormData();
-    formData.append("firstName", doctor.firstName);
-    formData.append("lastName", doctor.lastName);
-    formData.append("emailId", doctor.emailId);
-    formData.append("password", doctor.password);
-    formData.append("phone", doctor.phone);
-    formData.append("role", doctor.role);
-    formData.append("age", doctor.age);
-    formData.append("gender", doctor.gender);
-    formData.append("specialist", doctor.specialist);
-
-    axios
-      .post("http://localhost:8080/api/doctor/register", formData)
-      .then((result) => {
-        result.json().then((res) => {
-          console.log(res);
-          toast.success("Doctor Registered Successfully!!!", {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+    try {
+      const response = await axios.put(`${USER_API_URL}`, doctor);
+      if (response.data.success) {
+        toast.success("Doctor Updated Successfully!!!", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+        setDoctor({
+          id: doctorId,
+          firstName: "",
+          lastName: "",
+          emailId: "",
+          password: "",
+          phone: "",
+          role: "",
+          age: "",
+          gender: "",
+          specialist: "",
+          role: "DOCTOR",
+        });
+      }
+    } catch (error) {
+      toast.error("Update Failed. Please Try Again!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
+    }
   };
 
   return (
@@ -146,11 +159,12 @@ export const DoctorEdit = () => {
                 <select
                   onChange={handleUserInput}
                   className="form-control"
-                  name="sex"
+                  name="gender"
+                  value={doctor.gender}
                 >
                   <option value="0">Select Gender</option>
 
-                  {GENDERS.map((gender) => {
+                  {Object.values(GENDERS).map((gender) => {
                     return (
                       <option key={gender} value={gender}>
                         {gender}
@@ -168,10 +182,11 @@ export const DoctorEdit = () => {
                   onChange={handleUserInput}
                   className="form-control"
                   name="specialist"
+                  value={doctor.specialist}
                 >
-                  <option value="">Select Specialist</option>
+                  <option value="0">Select Specialist</option>
 
-                  {SPECIALISTS.map((s) => {
+                  {Object.values(SPECIALISTS).map((s) => {
                     return (
                       <option key={s} value={s}>
                         {s}
@@ -182,21 +197,21 @@ export const DoctorEdit = () => {
               </div>
 
               <div className="col-md-6 mb-3">
-                <label htmlFor="contact" className="form-label">
-                  <b>Contact No</b>
+                <label htmlFor="phone" className="form-label">
+                  <b>Phone No</b>
                 </label>
                 <input
                   type="number"
                   className="form-control"
-                  id="contact"
-                  name="contact"
+                  id="phone"
+                  name="phone"
                   onChange={handleUserInput}
-                  value={doctor.contact}
+                  value={doctor.phone}
                 />
               </div>
 
               <div className="col-md-6 mb-3">
-                <label htmlFor="contact" className="form-label">
+                <label htmlFor="age" className="form-label">
                   <b>Age</b>
                 </label>
                 <input

@@ -2,57 +2,66 @@ import { useState, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import { GENDERS,SPECIALISTS } from "../utils/Constant";
+import { GENDERS, SPECIALISTS } from "../utils/Constant";
+import { USER_API_URL } from "../config/config";
 
 const DoctorRegister = () => {
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
+    age: "",
     emailId: "",
     password: "",
     phone: "",
-    role: "",
-    age: "",
     gender: "",
     specialist: "",
+    role: "DOCTOR",
   });
-
-  user.role = "doctor";
 
   const handleUserInput = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const saveUser = (event) => {
+  const saveUser = async (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("firstName", user.firstName);
-    formData.append("lastName", user.lastName);
-    formData.append("emailId", user.emailId);
-    formData.append("password", user.password);
-    formData.append("phone", user.phone);
-    formData.append("role", user.role);
-    formData.append("age", user.age);
-    formData.append("gender", user.gender);
-    formData.append("specialist", user.specialist);
-
-    axios
-      .post("http://localhost:8080/api/doctor/register", formData)
-      .then((result) => {
-        result.json().then((res) => {
-          console.log(res);
-          toast.success("Doctor Registered Successfully!!!", {
-            position: "top-center",
-            autoClose: 1000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+    try {
+      const response = await axios.post(USER_API_URL, user);
+      if (response.data.success) {
+        toast.success("Doctor Registered successfully!!!", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
         });
+
+        setUser({
+          firstName: "",
+          lastName: "",
+          age: "",
+          emailId: "",
+          password: "",
+          phone: "",
+          gender: "0",
+          specialist: "0",
+          role: "DOCTOR",
+        });
+      }
+    } catch (error) {
+      toast.error("Doctor Registered Failed. Please try again", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
+      console.log(error.message);
+    }
   };
 
   return (
@@ -133,7 +142,7 @@ const DoctorRegister = () => {
                 >
                   <option value="0">Select Gender</option>
 
-                  {GENDERS.map((gender) => {
+                  {Object.values(GENDERS).map((gender) => {
                     return (
                       <option key={gender} value={gender}>
                         {gender}
@@ -154,7 +163,7 @@ const DoctorRegister = () => {
                 >
                   <option value="">Select Specialist</option>
 
-                  {SPECIALISTS.map((s) => {
+                  {Object.values(SPECIALISTS).map((s) => {
                     return (
                       <option key={s} value={s}>
                         {s}
@@ -171,10 +180,10 @@ const DoctorRegister = () => {
                 <input
                   type="number"
                   className="form-control"
-                  id="contact"
-                  name="contact"
+                  id="phone"
+                  name="phone"
                   onChange={handleUserInput}
-                  value={user.contact}
+                  value={user.phone}
                 />
               </div>
 

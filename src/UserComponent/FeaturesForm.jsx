@@ -1,56 +1,74 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Modal from "react-modal";
+import { useNewRecord } from "./newRecord";
+import { ButtonGroup } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { Pagination } from "./Pagination";
+import { RECORD_API_URL } from "../config/config";
 
 export const FeaturesForm = () => {
+  const { newRecord } = useNewRecord();
   const { recordId } = useParams();
 
   const [features, setFeatures] = useState({});
-  const [showModal, setShowModel] = useState(false);
-  const [newFeature, setNewFeature] = useState({ name: "", content: "" });
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleAddFeatureClick = () => {
-    setShowModel(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentFeatures = newRecord.recordFeatures.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
-  const handleModalClose = () => {
-    setShowModel(false);
+
+  const handleEditFeatureClick = () => {
+    setIsEditing(true);
   };
-  const handleFeatureNameChange = (e) => {
-    setNewFeature((prev) => ({
-      ...prev,
-      name: e.target.value,
-    }));
+  const handleCancelEditClick = () => {
+    setIsEditing(false);
+    window.location.reload();
   };
-  const handleFeatureContentChange = (e) => {
-    setNewFeature((prev) => ({
-      ...prev,
-      content: e.target.value,
-    }));
-  };
-  const handleSaveFeature = () => {
-    if (newFeature != null) {
-      addNewFeature(newFeature);
-      setNewFeature({ name: "", content: "" });
-      updateRecordFeatures(features);
-      handleModalClose();
+
+  const handleEditSaveClick = async () => {
+    setIsEditing(false);
+    const updatedRecord = {
+      recordFeatures: features,
+    };
+
+    try {
+      const response = await axios.put(
+        `${RECORD_API_URL}/${recordId}`,
+        updatedRecord
+      );
+      if (response.data.success) {
+        toast.success("Features Updated Successfully!!!", {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating record:", error);
     }
-  };
-  const addNewFeature = (newFeature) => {
-    setFeatures((preFeatures) => ({
-      ...preFeatures,
-      [newFeature.name]: newFeature.content,
-    }));
   };
 
   useEffect(() => {
     const fetchFeaturesData = async () => {
       try {
         console.log("record id: " + recordId);
-        const response = await axios.get(
-          `https://adproj.azurewebsites.net/record?id=${recordId}`
-        );
-        const featureData = response.data.data.recordlist[0].recordFeatures;
+        const response = await axios.get(`${RECORD_API_URL}/${recordId}`);
+
+        const featureData = response.data.data.medicalRecord.recordFeatures;
         setFeatures(featureData);
       } catch (error) {
         console.error("Error fetching doctor data:", error);
@@ -59,64 +77,94 @@ export const FeaturesForm = () => {
 
     fetchFeaturesData();
   }, [recordId]);
-  console.log("features.id: " + features.id);
 
   return (
     <div className="mt-3">
       <div className="card form-card ms-2 me-2 mb-5 custom-bg border-color ">
-        <h2 className="text-center mb-5">Features List</h2>
+        <div className="row align-items-center">
+          <div className="col">
+            <h2 className="text-center mb-2">Features List</h2>
+          </div>
+          <div className="col-auto">
+            {isEditing ? (
+              <ButtonGroup>
+                <button
+                  type="button"
+                  className="btn btn-warning mt-2"
+                  onClick={handleCancelEditClick}
+                >
+                  Cancel Edit
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success mt-2 ms-2"
+                  onClick={handleEditSaveClick}
+                >
+                  Save Edit
+                </button>
+              </ButtonGroup>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-warning mt-2"
+                onClick={handleEditFeatureClick}
+              >
+                Edit Features
+              </button>
+            )}
+          </div>
+        </div>
         <table className="table">
           <tbody>
-            {Object.entries(features).length > 0 ? (
-              Object.entries(features).map(([key, value]) => (
-                <tr key={key}>
-                  <td>
-                    <b>{key}</b>
-                  </td>
-                  <td>
-                    {typeof value === "object" ? (
-                      <pre>{JSON.stringify(value, null, 2)}</pre>
+            {currentFeatures.map((feature) => (
+              <tr key={feature.name}>
+                <td>
+                  <b>{feature.label}</b>
+                </td>
+                <td>
+                  {isEditing ? (
+                    feature.type === "select" ? (
+                      <select
+                        value={features[feature.name]}
+                        onChange={(e) => {
+                          setFeatures((prevFeatures) => ({
+                            ...prevFeatures,
+                            [feature.name]: e.target.value,
+                          }));
+                        }}
+                      >
+                        {feature.options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
-                      value
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <p>No features right now</p>
-            )}
+                      <input
+                        type="text"
+                        value={features[feature.name]}
+                        onChange={(e) => {
+                          setFeatures((prevFeatures) => ({
+                            ...prevFeatures,
+                            [feature.name]: e.target.value,
+                          }));
+                        }}
+                      />
+                    )
+                  ) : (
+                    features[feature.name]
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-        <button
-          type="button"
-          class="btn btn-primary mt-2"
-          onClick={handleAddFeatureClick}
-        >
-          Add Features
-        </button>
-
-        <Modal isOpen={showModal} onRequestClose={handleModalClose}>
-          <h3>Add New Feature</h3>
-          <div>
-            <label>Feature Name:</label>
-            <input
-              type="text"
-              value={newFeature.name}
-              onChange={handleFeatureNameChange}
-            />
-          </div>
-          <div>
-            <label>Feature Content:</label>
-            <input
-              type="text"
-              value={newFeature.content}
-              onChange={handleFeatureContentChange}
-            />
-          </div>
-          <button type="button" onClick={handleSaveFeature}>
-            Save Feature
-          </button>
-        </Modal>
+        <Pagination
+          totalItems={newRecord.recordFeatures.length}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

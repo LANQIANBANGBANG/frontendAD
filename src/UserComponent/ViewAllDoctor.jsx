@@ -3,6 +3,7 @@ import axios from "axios";
 import React from "react";
 import { ButtonGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { USER_API_URL } from "../config/config";
 
 const ViewAllDoctor = () => {
   const [allDoctor, setAllDoctor] = useState([]);
@@ -19,9 +20,11 @@ const ViewAllDoctor = () => {
   }, []);
 
   const retrieveAllDoctor = async () => {
-    const response = await axios.get("http://localhost:8080/api/doctor/all");
-    console.log(response.data);
-    return response.data;
+    const response = await axios.get(`${USER_API_URL}/findRole/DOCTOR`);
+    console.log(
+      "Getting all doctors: " + JSON.stringify(response.data.data.roleList)
+    );
+    return response.data.data.roleList;
   };
 
   const deleteDoctor = (doctorId) => {
@@ -38,6 +41,9 @@ const ViewAllDoctor = () => {
     });
 
     window.location.reload(true);
+  };
+  const updateDoctor = (doctorId) => {
+    fetch();
   };
 
   return (
@@ -60,13 +66,12 @@ const ViewAllDoctor = () => {
           <div className="table-responsive">
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
-                <tr>
-                  <th scope="col">Id</th>
+                <tr className="text-center">
+                  <th scope="col">Specialist</th>
                   <th scope="col">First Name</th>
                   <th scope="col">Last Name</th>
                   <th scope="col">Age</th>
                   <th scope="col">Email Id</th>
-                  <th scope="col">Specialist</th>
                   <th scope="col">Phone No</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -75,39 +80,23 @@ const ViewAllDoctor = () => {
                 {allDoctor.map((doctor) => {
                   return (
                     <tr>
-                      <td>
-                        <b>{doctor.firstName}</b>
-                      </td>
-                      <td>
-                        <b>{doctor.lastName}</b>
-                      </td>
-                      <td>
-                        <b>{doctor.age}</b>
-                      </td>
-                      <td>
-                        <b>{doctor.emailId}</b>
-                      </td>
-                      <td>
-                        <b>{doctor.specialist}</b>
-                      </td>
-                      <td>
-                        <b>{doctor.contact}</b>
-                      </td>
+                      <td>{doctor.specialist}</td>
+                      <td>{doctor.firstName}</td>
+                      <td>{doctor.lastName}</td>
+                      <td>{doctor.age}</td>
+                      <td>{doctor.emailId}</td>
+                      <td>{doctor.phone}</td>
                       <td>
                         <ButtonGroup>
                           <button
-                            className="btn bg-color custom-bg-text btn-sm"
+                            className="btn btn-primary me-1"
                             onClick={() => deleteDoctor(doctor.id)}
                           >
                             Delete
                           </button>
-                          <button
-                            className="btn bg-color custom-bg-text btn-sm"
-                            tag={Link}
-                            to={"/user/doctor/update/" + doctor.id}
-                          >
-                            Update
-                          </button>
+                          <Link to={`/user/doctor/update/${doctor.id}`}>
+                            <button className="btn btn-primary ">Update</button>
+                          </Link>
                         </ButtonGroup>
                       </td>
                     </tr>

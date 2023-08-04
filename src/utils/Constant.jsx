@@ -1,16 +1,17 @@
-export const GENDERS = ["Male", "Female"];
-
-export const SPECIALISTS = [
-  "Anaesthesiology",
-  "Cardiology",
-  "Dermatology",
-  "Diagnostic Radiology",
-  "Endocrinology",
-  "Gastroenterology",
-  "Geriatric Medicine",
-  "Neurology",
-  "Ophthalmology",
-  "Psychiatry",
-  "Rehabilitation Medicine",
-  "Urology",
-];
+export const GENDERS = {
+  FEMALE: "Female",
+  MALE: "Male",
+};
+export const SPECIALISTS = {
+  CARDIOLOGIST: "Cardiologist",
+  DERMATOLOGIST: "Dermatologist",
+  NEUROLOGIST: "Neurologist",
+  GYNECOLOGIST: "Gynecologist",
+  OPHTHALMOLOGIST: "Ophthalmologist",
+  ORTHOPEDIST: "Orthopedist",
+  PEDIATRICIAN: "Pediatrician",
+  PSYCHIATRIST: "Psychiatrist",
+  UROLOGIST: "Urologist",
+  ENT_SPECIALIST: "ENT Specialist",
+  // Add more specialists here as needed
+};

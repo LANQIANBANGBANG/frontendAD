@@ -11,6 +11,8 @@ import DoctorRegister from "./UserComponent/DoctorRegister";
 import { DoctorEdit } from "./UserComponent/DoctorEdit";
 import { ViewAllMedicalRecord } from "./UserComponent/ViewAllMedicalRecord";
 import { FeaturesForm } from "./UserComponent/FeaturesForm";
+import { AddMedicalRecordPage } from "./UserComponent/AddMedicalRecordPage";
+import { ViewAllReport } from "./ReportComponent/ViewAllReport";
 
 export function App() {
   return (
@@ -25,6 +27,8 @@ export function App() {
         <Route path="/user/doctor/update/:id" element={<DoctorEdit />} />
         <Route path="/record/all" element={<ViewAllMedicalRecord />} />
         <Route path="/record/features/:recordId" element={<FeaturesForm />} />
+        <Route path="/add-medical-record" element={<AddMedicalRecordPage />} />
+        <Route path="/report/all" element={<ViewAllReport />} />
       </Routes>
     </>
   );
