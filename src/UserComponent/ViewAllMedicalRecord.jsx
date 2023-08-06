@@ -27,7 +27,6 @@ export const ViewAllMedicalRecord = () => {
     const getAllMedicalRecord = async () => {
       try {
         const allMedicalRecordData = await retrieveAllMedicalRecord();
-        console.log(allMedicalRecordData);
         if (allMedicalRecordData) {
           setAllMedicalRecord(allMedicalRecordData);
         }

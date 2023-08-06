@@ -13,6 +13,7 @@ import { ViewAllMedicalRecord } from "./UserComponent/ViewAllMedicalRecord";
 import { FeaturesForm } from "./UserComponent/FeaturesForm";
 import { AddMedicalRecordPage } from "./UserComponent/AddMedicalRecordPage";
 import { ViewAllReport } from "./ReportComponent/ViewAllReport";
+import { CustomFeaturesPage } from "./UserComponent/CustomFeaturesPage";
 
 export function App() {
   return (
@@ -29,6 +30,10 @@ export function App() {
         <Route path="/record/features/:recordId" element={<FeaturesForm />} />
         <Route path="/add-medical-record" element={<AddMedicalRecordPage />} />
         <Route path="/report/all" element={<ViewAllReport />} />
+        <Route
+          path="/custom-features/:recordId"
+          element={<CustomFeaturesPage />}
+        />
       </Routes>
     </>
   );

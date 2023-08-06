@@ -6,6 +6,7 @@ import { ButtonGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
 import { RECORD_API_URL } from "../config/config";
+import { Link } from "react-router-dom";
 
 export const FeaturesForm = () => {
   const { newRecord } = useNewRecord();
@@ -61,11 +62,11 @@ export const FeaturesForm = () => {
       console.error("Error updating record:", error);
     }
   };
+  console.log("features in the features page: ", features);
 
   useEffect(() => {
     const fetchFeaturesData = async () => {
       try {
-        console.log("record id: " + recordId);
         const response = await axios.get(`${RECORD_API_URL}/${recordId}`);
 
         const featureData = response.data.data.medicalRecord.recordFeatures;
@@ -84,6 +85,7 @@ export const FeaturesForm = () => {
         <div className="row align-items-center">
           <div className="col">
             <h2 className="text-center mb-2">Features List</h2>
+            <b className="text-center">Record {recordId}</b>
           </div>
           <div className="col-auto">
             {isEditing ? (
@@ -157,6 +159,13 @@ export const FeaturesForm = () => {
                 </td>
               </tr>
             ))}
+            <Link
+              to={`/custom-features/${recordId}?features=${JSON.stringify(
+                features
+              )}`}
+            >
+              <button className="btn btn-primary">Show Custom Features</button>
+            </Link>
           </tbody>
         </table>
         <Pagination

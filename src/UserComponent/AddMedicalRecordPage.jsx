@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { FeatureTable } from "./FeatureTable";
 import { useNewRecord } from "./newRecord";
 import { RECORD_API_URL } from "../config/config";
+import { CustomFeatureForm } from "./CustomFeatureForm";
 
 export const AddMedicalRecordPage = () => {
   const navigate = useNavigate();
   const { newRecord, setNewRecord } = useNewRecord();
   const initialRecordState = JSON.stringify(newRecord);
+  const [customFeatures, setCustomFeatures] = useState([]);
+  const [showCustomFeatureForm, setShowCustomFeatureForm] = useState(false);
 
   const handlePatientIdChange = (e) => {
     setNewRecord((prev) => ({
@@ -37,18 +40,36 @@ export const AddMedicalRecordPage = () => {
     }));
     console.log(newRecord);
   };
+  const handleAddCustomFeatures = () => {
+    setShowCustomFeatureForm(true);
+  };
+
+  const handleCustomFeatureSubmit = (customFeatureData) => {
+    if (customFeatureData == null) {
+      console.log("customfeaturedata is null");
+    }
+    const newCustomFeature = {
+      name: customFeatureData.name,
+      label: customFeatureData.name,
+      type: "text",
+      value: customFeatureData.value,
+    };
+    setCustomFeatures((prevFeatures) => [...prevFeatures, newCustomFeature]);
+    console.log("custom features new: " + JSON.stringify(customFeatures));
+    setShowCustomFeatureForm(false);
+  };
 
   const handleSaveRecord = async (e) => {
     e.preventDefault();
 
     try {
-      const recordFeaturesObj = newRecord.recordFeatures.reduce(
-        (acc, feature) => {
-          acc[feature.name] = feature.value;
-          return acc;
-        },
-        {}
-      );
+      const allFeatures = [...newRecord.recordFeatures, ...customFeatures];
+      console.log("all features???: " + JSON.stringify(allFeatures));
+
+      const recordFeaturesObj = allFeatures.reduce((acc, feature) => {
+        acc[feature.name] = feature.value;
+        return acc;
+      }, {});
       const postData = {
         patientId: newRecord.patientId,
         date: newRecord.date,
@@ -57,7 +78,6 @@ export const AddMedicalRecordPage = () => {
       const response = await axios.post(RECORD_API_URL, postData);
       if (response.data.success) {
         setNewRecord(initialRecordState);
-        console.log(newRecord);
         navigate("/record/all");
       } else {
         console.log("Failed to add record:");
@@ -100,10 +120,38 @@ export const AddMedicalRecordPage = () => {
           newRecord={newRecord}
           handleFeaturesChange={handleFeaturesChange}
         />
+        <div>
+          <h3>Custom Features:</h3>
+          <ul>
+            {customFeatures.map((feature, index) => (
+              <div key={index}>
+                <label htmlFor="customValue">{feature.name}</label>
+                <input id="customValue" type="text" value={feature.value} />
+              </div>
+            ))}
+          </ul>
+        </div>
+        {showCustomFeatureForm && (
+          <div>
+            <CustomFeatureForm
+              onAddFeature={handleCustomFeatureSubmit}
+              onCancel={() => {
+                setShowCustomFeatureForm(false);
+              }}
+            />
+          </div>
+        )}
         <div className="row mt-3 mb-3">
           <div>
-            <button className="btn btn-primary" type="submit">
+            <button className="btn btn-primary me-1" type="submit">
               Save Record
+            </button>
+            <button
+              className="btn btn-warning"
+              type="button"
+              onClick={handleAddCustomFeatures}
+            >
+              Add Custom Features
             </button>
           </div>
         </div>
