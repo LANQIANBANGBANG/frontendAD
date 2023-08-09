@@ -6,6 +6,8 @@ import { FeatureTable } from "./FeatureTable";
 import { useNewRecord } from "./newRecord";
 import { RECORD_API_URL } from "../config/config";
 import { CustomFeatureForm } from "./CustomFeatureForm";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const AddMedicalRecordPage = () => {
   const navigate = useNavigate();
@@ -71,10 +73,40 @@ export const AddMedicalRecordPage = () => {
 
   const handleSaveRecord = async (e) => {
     e.preventDefault();
+    if (!newRecord.patientId) {
+      console.log("toast should come up!");
+    }
+    if (!newRecord.patientId || !newRecord.date) {
+      toast.error("You must fill in all compulsory fields!!!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
+    const missingFeatures = newRecord.recordFeatures.filter(
+      (feature) => feature.isRequired && !feature.value
+    );
+    if (missingFeatures.length > 0) {
+      toast.error("You must fill in all compulsory fields!!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
 
     try {
       const allFeatures = [...newRecord.recordFeatures, ...customFeatures];
-      console.log("all features???: " + JSON.stringify(allFeatures));
 
       const recordFeaturesObj = allFeatures.reduce((acc, feature) => {
         acc[feature.name] = feature.value;
@@ -100,11 +132,14 @@ export const AddMedicalRecordPage = () => {
   return (
     <form onSubmit={handleSaveRecord}>
       <div className="form-group m-3">
+        <ToastContainer />
         <h3 className="text-center">Add New Medical Record</h3>
         <h4>Basic Info</h4>
         <div className="d-flex flex-row align-items-center mt-2">
           <div className="form-group">
-            <label htmlFor="patientId">Patient Id </label>
+            <label htmlFor="patientId">
+              <b>Patient Id*</b>{" "}
+            </label>
             <input
               className="form-control"
               type="text"
@@ -112,16 +147,20 @@ export const AddMedicalRecordPage = () => {
               value={newRecord.patientId}
               onChange={handlePatientIdChange}
               placeholder="Enter patient ID"
+              required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="date">Date Created </label>
+            <label htmlFor="date">
+              <b>Date Created*</b>{" "}
+            </label>
             <input
               className="form-control"
               type="date"
               id="date"
               value={newRecord.date}
               onChange={handleDateChange}
+              required
             />
           </div>
         </div>
@@ -172,6 +211,7 @@ export const AddMedicalRecordPage = () => {
         )}
         <div className="row mt-3 mb-3">
           <div className="button-group">
+            <p>* are compulsory fileds</p>
             <button className="btn btn-primary me-1" type="submit">
               Save Record
             </button>
