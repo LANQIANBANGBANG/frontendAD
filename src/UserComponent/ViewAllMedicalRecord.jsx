@@ -80,11 +80,17 @@ export const ViewAllMedicalRecord = () => {
           <h2>All Medical Record</h2>
         </div>
         <div
-          className="card-body"
+          className="card-body min-vh-100"
           style={{
             overflowY: "auto",
           }}
         >
+          <div className="mb-3">
+            <Link to="/add-medical-record" className="btn btn-primary">
+              <i className="bi bi-plus me-2"></i>
+              Add New Medical Record
+            </Link>
+          </div>
           <div className="table-responsive">
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
@@ -110,17 +116,13 @@ export const ViewAllMedicalRecord = () => {
                         <p>{medicalRecord.date}</p>
                       </td>
                       <td>
-                        <button
-                          className="me-1"
-                          onClick={console.log("clickId: " + medicalRecord.id)}
-                        >
-                          <Link to={`/record/features/${medicalRecord.id}`}>
-                            Check Content Details
-                          </Link>
-                        </button>
+                        <Link to={`/record/features/${medicalRecord.id}`}>
+                          Check Content Details
+                        </Link>
                       </td>
                       <td>
                         <button
+                          className="btn btn-danger"
                           onClick={() => {
                             handleDeleteAction(medicalRecord.id);
                           }}
@@ -133,20 +135,14 @@ export const ViewAllMedicalRecord = () => {
                 })}
               </tbody>
             </table>
-
-            <Link to="/add-medical-record">
-              <button type="button" className="btn mt-2">
-                Add New Medical Record
-              </button>
-            </Link>
           </div>
-          <Pagination
-            totalItems={allMedicalRecord.length}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            onPageChange={handlePageChange}
-          />
         </div>
+        <Pagination
+          totalItems={allMedicalRecord.length}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

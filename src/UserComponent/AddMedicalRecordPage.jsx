@@ -13,6 +13,8 @@ export const AddMedicalRecordPage = () => {
   const initialRecordState = JSON.stringify(newRecord);
   const [customFeatures, setCustomFeatures] = useState([]);
   const [showCustomFeatureForm, setShowCustomFeatureForm] = useState(false);
+  const [showAddCustomFeaturesButton, setShowAddCustomFeautresButton] =
+    useState(true);
 
   const handlePatientIdChange = (e) => {
     setNewRecord((prev) => ({
@@ -42,6 +44,7 @@ export const AddMedicalRecordPage = () => {
   };
   const handleAddCustomFeatures = () => {
     setShowCustomFeatureForm(true);
+    setShowAddCustomFeautresButton(false);
   };
 
   const handleCustomFeatureSubmit = (customFeatureData) => {
@@ -57,6 +60,13 @@ export const AddMedicalRecordPage = () => {
     setCustomFeatures((prevFeatures) => [...prevFeatures, newCustomFeature]);
     console.log("custom features new: " + JSON.stringify(customFeatures));
     setShowCustomFeatureForm(false);
+  };
+  const handleDeleteCustomFeature = (index) => {
+    setCustomFeatures((prevFeatures) => {
+      const newFeatures = [...prevFeatures];
+      newFeatures.splice(index, 1);
+      return newFeatures;
+    });
   };
 
   const handleSaveRecord = async (e) => {
@@ -89,10 +99,11 @@ export const AddMedicalRecordPage = () => {
 
   return (
     <form onSubmit={handleSaveRecord}>
-      <div className="form-group mt-3">
-        <h3>Add New Medical Record</h3>
-        <div className="row">
-          <div>
+      <div className="form-group m-3">
+        <h3 className="text-center">Add New Medical Record</h3>
+        <h4>Basic Info</h4>
+        <div className="d-flex flex-row align-items-center mt-2">
+          <div className="form-group">
             <label htmlFor="patientId">Patient Id </label>
             <input
               className="form-control"
@@ -103,9 +114,7 @@ export const AddMedicalRecordPage = () => {
               placeholder="Enter patient ID"
             />
           </div>
-        </div>
-        <div className="row mt-3">
-          <div>
+          <div className="form-group">
             <label htmlFor="date">Date Created </label>
             <input
               className="form-control"
@@ -121,12 +130,19 @@ export const AddMedicalRecordPage = () => {
           handleFeaturesChange={handleFeaturesChange}
         />
         <div>
-          <h3>Custom Features:</h3>
+          <h4>Custom Features</h4>
           <ul>
             {customFeatures.map((feature, index) => (
-              <div key={index}>
-                <label htmlFor="customValue">{feature.name}</label>
-                <input id="customValue" type="text" value={feature.value} />
+              <div key={index} className="custom-attribute">
+                <p>
+                  <strong>{feature.name}</strong>: {feature.value}
+                </p>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDeleteCustomFeature(index)}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </ul>
@@ -134,24 +150,30 @@ export const AddMedicalRecordPage = () => {
         {showCustomFeatureForm && (
           <div>
             <CustomFeatureForm
-              onAddFeature={handleCustomFeatureSubmit}
+              onAddFeature={(customFeatureData) => {
+                handleCustomFeatureSubmit(customFeatureData);
+                setShowAddCustomFeautresButton(true);
+              }}
               onCancel={() => {
                 setShowCustomFeatureForm(false);
+                setShowAddCustomFeautresButton(true);
               }}
             />
           </div>
         )}
+        {showAddCustomFeaturesButton && (
+          <button
+            className="btn btn-warning"
+            type="button"
+            onClick={handleAddCustomFeatures}
+          >
+            Add Custom Features
+          </button>
+        )}
         <div className="row mt-3 mb-3">
-          <div>
+          <div className="button-group">
             <button className="btn btn-primary me-1" type="submit">
               Save Record
-            </button>
-            <button
-              className="btn btn-warning"
-              type="button"
-              onClick={handleAddCustomFeatures}
-            >
-              Add Custom Features
             </button>
           </div>
         </div>

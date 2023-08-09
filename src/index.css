@@ -103,3 +103,19 @@ main {
 .card:hover .product-card {
   transform: scale(1.2);
 }
+
+.feature-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.feature-item {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.feature-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}

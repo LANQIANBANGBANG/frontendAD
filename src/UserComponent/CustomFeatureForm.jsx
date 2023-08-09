@@ -17,32 +17,45 @@ export const CustomFeatureForm = ({ onAddFeature, onCancel }) => {
     setCustomFeatureValue("");
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="customFeatureName">Feature Name</label>
-        <input
-          type="text"
-          id="customFeatureName"
-          value={customFeatureName}
-          onChange={(e) => setCustomFeatureName(e.target.value)}
-          required
-        />
+    <form onSubmit={handleSubmit} className="custom-form">
+      <div className="row mb-2">
+        <div className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="customFeatureName">Feature Name</label>
+            <input
+              className="form-control"
+              type="text"
+              id="customFeatureName"
+              value={customFeatureName}
+              onChange={(e) => setCustomFeatureName(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="customFeatureValue">Feature Value</label>
+            <input
+              className="form-control"
+              type="text"
+              id="customFeatureValue"
+              value={customFeatureValue}
+              onChange={(e) => setCustomFeatureValue(e.target.value)}
+              required
+            />
+          </div>
+        </div>
       </div>
-      <div>
-        <label htmlFor="customFeatureValue">Feature Value</label>
-        <input
-          type="text"
-          id="customFeatureValue"
-          value={customFeatureValue}
-          onChange={(e) => setCustomFeatureValue(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <button type="submit" onClick={handleSubmit}>
+
+      <div className="button-group">
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="btn btn-primary"
+        >
           Submit Custom Feature
         </button>
-        <button type="submit" onClick={onCancel}>
+        <button type="button" onClick={onCancel} className="btn btn-secondary">
           Cancel
         </button>
       </div>

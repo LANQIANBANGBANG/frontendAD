@@ -30,12 +30,6 @@ export const DoctorHeader = () => {
         </Link>
       </li>
 
-      <li className="nav-item">
-        <Link to="/report/all" className="nav-link active" aria-current="page">
-          <b className="text-color">View Report</b>
-        </Link>
-      </li>
-
       <li class="nav-item">
         <Link
           to=""

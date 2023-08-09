@@ -1,6 +1,7 @@
 import AdminHeader from "./AdminHeader";
 import NormalHeader from "./NormalHeader";
 import { DoctorHeader } from "./DoctorHeader";
+import { ResearcherHeader } from "./ResearcherHeader";
 
 export const RoleNav = () => {
   // const doctor = JSON.parse(sessionStorage.getItem("active-doctor"));

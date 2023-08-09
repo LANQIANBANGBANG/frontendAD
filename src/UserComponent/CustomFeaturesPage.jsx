@@ -63,6 +63,7 @@ export const CustomFeaturesPage = () => {
     setCustomFeatures((prevFeatures) => {
       const updatedFeatures = { ...prevFeatures };
       delete updatedFeatures[name];
+      updateCustomFeatures(updatedFeatures);
       return updatedFeatures;
     });
   };
