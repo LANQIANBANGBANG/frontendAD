@@ -10,6 +10,7 @@ const UserLoginForm = () => {
   const [loginRequest, setLoginRequest] = useState({
     emailId: "",
     password: "",
+    role: "",
   });
 
   const handleUserInput = (e) => {
@@ -17,7 +18,7 @@ const UserLoginForm = () => {
   };
 
   const loginAction = (e) => {
-    fetch("http://localhost:8080/api/user/login", {
+    fetch("https://adproj.azurewebsites.net/auth/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -29,10 +30,13 @@ const UserLoginForm = () => {
       result.json().then((res) => {
         console.log(res);
 
-        if (res.role === "admin") {
+        const selectedRole = loginRequest.role;
+        if (selectedRole === "admin") {
           sessionStorage.setItem("active-admin", JSON.stringify(res));
-        } else if (res.role === "doctor") {
+        } else if (selectedRole === "doctor") {
           sessionStorage.setItem("active-doctor", JSON.stringify(res));
+        } else if (selectedRole === "researcher") {
+          sessionStorage.setItem("active-researcher", JSON.stringify(res));
         }
 
         toast.success("logged in successfully!!!", {
@@ -64,6 +68,21 @@ const UserLoginForm = () => {
           </div>
           <div className="card-body">
             <form>
+              <div class="mb-3 text-color">
+                <label for="role" class="form-label">
+                  <b>User Role</b>
+                </label>
+                <select
+                  onChange={handleUserInput}
+                  className="form-control"
+                  name="role"
+                >
+                  <option value="0">Select Role</option>
+                  <option value="admin"> Admin </option>
+                  <option value="researcher">Researcher</option>
+                  <option value="doctor"> Doctor </option>
+                </select>
+              </div>
               <div className="mb-3 text-color">
                 <label for="emailId" class="form-label">
                   <b>Email Id</b>

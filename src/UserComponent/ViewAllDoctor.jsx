@@ -28,8 +28,8 @@ const ViewAllDoctor = () => {
   };
 
   const deleteDoctor = (doctorId) => {
-    fetch("http://localhost:8080/api/user/delete/id?userId=" + doctorId, {
-      method: "GET",
+    fetch(`${USER_API_URL}/${doctorId}`, {
+      method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -41,9 +41,6 @@ const ViewAllDoctor = () => {
     });
 
     window.location.reload(true);
-  };
-  const updateDoctor = (doctorId) => {
-    fetch();
   };
 
   return (
