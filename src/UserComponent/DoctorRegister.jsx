@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { GENDERS, SPECIALISTS } from "../utils/Constant";
-import { USER_API_URL, REGISTER_API_URL } from "../config/config";
+import { REGISTER_API_URL } from "../config/config";
 
 const DoctorRegister = () => {
   const [user, setUser] = useState({
@@ -26,8 +26,16 @@ const DoctorRegister = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(REGISTER_API_URL, user);
-      if (response.data.success) {
+      const response = await fetch(`${REGISTER_API_URL}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
         toast.success("Doctor Registered successfully!!!", {
           position: "top-center",
           autoClose: 1000,

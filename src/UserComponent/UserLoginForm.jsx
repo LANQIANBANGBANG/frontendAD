@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { LOGIN_API_URL } from "../config/config";
 
 const UserLoginForm = () => {
   let navigate = useNavigate();
@@ -18,7 +19,7 @@ const UserLoginForm = () => {
   };
 
   const loginAction = (e) => {
-    fetch("https://adproj.azurewebsites.net/auth/login", {
+    fetch(`${LOGIN_API_URL}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -30,7 +31,10 @@ const UserLoginForm = () => {
       result.json().then((res) => {
         console.log(res);
 
+        const token = res.access_token;
         const selectedRole = loginRequest.role;
+
+        sessionStorage.setItem("auth-token", token);
         if (selectedRole === "admin") {
           sessionStorage.setItem("active-admin", JSON.stringify(res));
         } else if (selectedRole === "doctor") {
