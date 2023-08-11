@@ -17,9 +17,8 @@ const AdminHeader = () => {
       draggable: true,
       progress: undefined,
     });
-    sessionStorage.removeItem("active-admin");
-    window.location.reload(true);
     navigate("/");
+    sessionStorage.removeItem("active-admin");
   };
 
   return (
@@ -41,6 +40,24 @@ const AdminHeader = () => {
           aria-current="page"
         >
           <b className="text-color">Register Doctor</b>
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link
+          to="user/researcher/all"
+          className="nav-link active"
+          aria-current="page"
+        >
+          <b className="text-color">View Researchers</b>
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link
+          to="/user/researcher/register"
+          className="nav-link active"
+          aria-current="page"
+        >
+          <b className="text-color">Register Researcher</b>
         </Link>
       </li>
 

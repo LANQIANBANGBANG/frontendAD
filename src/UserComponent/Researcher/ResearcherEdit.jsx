@@ -2,48 +2,42 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { GENDERS, SPECIALISTS } from "../utils/Constant";
-import { USER_API_URL } from "../config/config";
+import { USER_API_URL } from "../../config/config";
 
-export const DoctorEdit = () => {
-  const { id: doctorId } = useParams();
-  const [doctor, setDoctor] = useState({
-    id: doctorId,
+export const ResearcherEdit = () => {
+  const { id: researcherId } = useParams();
+  const [researcher, setResearcher] = useState({
+    id: researcherId,
     firstName: "",
     lastName: "",
     emailId: "",
     password: "",
-    phone: "",
-    role: "",
-    age: "",
-    gender: "",
-    specialist: "",
-    role: "DOCTOR",
+    role: "RESEARCHER",
   });
   const token = sessionStorage.getItem("auth-token");
-  console.log("token on this page: ", token);
+  //console.log("token on this page: ", token);
 
   useEffect(() => {
-    const fetchDoctorData = async () => {
+    const fetchResearcherData = async () => {
       try {
-        const response = await axios.get(`${USER_API_URL}/${doctorId}`);
-        const doctorData = response.data.data.user;
-        setDoctor(doctorData);
+        const response = await axios.get(`${USER_API_URL}/${researcherId}`);
+        const researcherData = response.data.data.user;
+        setResearcher(researcherData);
       } catch (error) {
-        console.error("Error fetching doctor data:", error);
+        console.error("Error fetching researcher data:", error);
       }
     };
 
-    fetchDoctorData();
-  }, [doctorId]);
+    fetchResearcherData();
+  }, [researcherId]);
 
   const handleUserInput = (event) => {
     const { name, value } = event.target;
 
-    setDoctor({ ...doctor, [name]: value });
+    setResearcher({ ...researcher, [name]: value });
   };
 
-  const updateDoctor = async (event) => {
+  const updateResearcher = async (event) => {
     event.preventDefault();
 
     try {
@@ -59,7 +53,7 @@ export const DoctorEdit = () => {
       window.location.reload(true);
 
       if (response.data.success) {
-        toast.success("Doctor Updated Successfully!!!", {
+        toast.success("Researcher Updated Successfully!!!", {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -68,17 +62,12 @@ export const DoctorEdit = () => {
           draggable: true,
           progress: undefined,
         });
-        setDoctor({
-          id: doctorId,
+        setResearcher({
+          id: researcherId,
           firstName: "",
           lastName: "",
           emailId: "",
           password: "",
-          phone: "",
-          role: "",
-          age: "",
-          gender: "",
-          specialist: "",
           role: "DOCTOR",
         });
       }
@@ -103,10 +92,10 @@ export const DoctorEdit = () => {
           style={{ width: "50rem" }}
         >
           <div className="card-header bg-color custom-bg-text text-center">
-            <h5 className="card-title">Edit Doctor</h5>
+            <h5 className="card-title">Edit Researcher</h5>
           </div>
           <div className="card-body">
-            <form className="row g-3" onSubmit={updateDoctor}>
+            <form className="row g-3" onSubmit={updateResearcher}>
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="title" className="form-label">
                   <b> First Name</b>
@@ -117,7 +106,7 @@ export const DoctorEdit = () => {
                   id="firstName"
                   name="firstName"
                   onChange={handleUserInput}
-                  value={doctor.firstName}
+                  value={researcher.firstName}
                 />
               </div>
               <div className="col-md-6 mb-3 text-color">
@@ -130,7 +119,7 @@ export const DoctorEdit = () => {
                   id="lastName"
                   name="lastName"
                   onChange={handleUserInput}
-                  value={doctor.lastName}
+                  value={researcher.lastName}
                 />
               </div>
 
@@ -144,7 +133,7 @@ export const DoctorEdit = () => {
                   id="emailId"
                   name="emailId"
                   onChange={handleUserInput}
-                  value={doctor.emailId}
+                  value={researcher.emailId}
                 />
               </div>
 
@@ -158,79 +147,7 @@ export const DoctorEdit = () => {
                   id="password"
                   name="password"
                   onChange={handleUserInput}
-                  value={doctor.password}
-                />
-              </div>
-
-              <div className="col-md-6 mb-3 text-color">
-                <label htmlFor="sex" className="form-label">
-                  <b>User Gender</b>
-                </label>
-                <select
-                  onChange={handleUserInput}
-                  className="form-control"
-                  name="gender"
-                  value={doctor.gender}
-                >
-                  <option value="0">Select Gender</option>
-
-                  {Object.values(GENDERS).map((gender) => {
-                    return (
-                      <option key={gender} value={gender}>
-                        {gender}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              <div className="col-md-6 mb-3 text-color">
-                <label htmlFor="bloodGroup" className="form-label">
-                  <b>Specialist</b>
-                </label>
-                <select
-                  onChange={handleUserInput}
-                  className="form-control"
-                  name="specialist"
-                  value={doctor.specialist}
-                >
-                  <option value="0">Select Specialist</option>
-
-                  {Object.values(SPECIALISTS).map((s) => {
-                    return (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label htmlFor="phone" className="form-label">
-                  <b>Phone No</b>
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="phone"
-                  name="phone"
-                  onChange={handleUserInput}
-                  value={doctor.phone}
-                />
-              </div>
-
-              <div className="col-md-6 mb-3">
-                <label htmlFor="age" className="form-label">
-                  <b>Age</b>
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="age"
-                  name="age"
-                  onChange={handleUserInput}
-                  value={doctor.age}
+                  value={researcher.password}
                 />
               </div>
 
@@ -238,7 +155,7 @@ export const DoctorEdit = () => {
                 <input
                   type="submit"
                   className="btn bg-color custom-bg-text"
-                  value="Update Doctor"
+                  value="Update Researcher"
                 />
               </div>
 

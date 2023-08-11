@@ -17,9 +17,8 @@ export const DoctorHeader = () => {
       draggable: true,
       progress: undefined,
     });
-    sessionStorage.removeItem("active-doctor");
-    window.location.reload(true);
     navigate("/");
+    sessionStorage.removeItem("active-doctor");
   };
 
   return (

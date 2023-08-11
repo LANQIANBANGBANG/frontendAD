@@ -4,6 +4,7 @@ import { featureRestrictions } from "./FeatureRestrictions";
 export const useNewRecord = () => {
   const [newRecord, setNewRecord] = useState({
     patientId: "",
+    name: "",
     date: "",
     recordFeatures: [
       { name: "age", label: "Age*", type: "int", isRequired: true, value: "" },

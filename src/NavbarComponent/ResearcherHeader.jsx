@@ -17,9 +17,9 @@ export const ResearcherHeader = () => {
       draggable: true,
       progress: undefined,
     });
+    navigate("/");
     sessionStorage.removeItem("active-researcher");
     window.location.reload(true);
-    navigate("/");
   };
 
   return (

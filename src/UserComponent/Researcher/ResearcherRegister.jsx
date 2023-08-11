@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import { GENDERS, SPECIALISTS } from "../utils/Constant";
-import { REGISTER_API_URL } from "../config/config";
+import { GENDERS, SPECIALISTS } from "../../utils/Constant";
+import { REGISTER_API_URL } from "../../config/config";
 
-const DoctorRegister = () => {
+export const ResearcherRegister = () => {
   const [user, setUser] = useState({
     emailId: "",
     password: "",
-    role: "DOCTOR",
+    role: "RESEARCHER",
   });
 
   const handleUserInput = (e) => {
@@ -30,7 +30,7 @@ const DoctorRegister = () => {
       });
 
       if (response.ok) {
-        toast.success("Doctor Registered successfully!!!", {
+        toast.success("Researcher Registered successfully!!!", {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -47,7 +47,7 @@ const DoctorRegister = () => {
         });
       }
     } catch (error) {
-      toast.error("Doctor Registered Failed. Please try again", {
+      toast.error("Researcher Registered Failed. Please try again", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -104,7 +104,7 @@ const DoctorRegister = () => {
                 <input
                   type="submit"
                   className="btn bg-color custom-bg-text"
-                  value="Register Doctor"
+                  value="Register Researcher"
                 />
               </div>
 
@@ -116,5 +116,3 @@ const DoctorRegister = () => {
     </div>
   );
 };
-
-export default DoctorRegister;

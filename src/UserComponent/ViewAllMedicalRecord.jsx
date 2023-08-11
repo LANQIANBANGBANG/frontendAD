@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
 import { RECORD_API_URL } from "../config/config";
+import { GeneratePatientId } from "../utils/GeneratePatientId";
 
 export const ViewAllMedicalRecord = () => {
   const [allMedicalRecord, setAllMedicalRecord] = useState([]);
@@ -22,13 +23,26 @@ export const ViewAllMedicalRecord = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  const token = sessionStorage.getItem("auth-token");
+  //console.log("token: ", token);
 
   useEffect(() => {
     const getAllMedicalRecord = async () => {
       try {
         const allMedicalRecordData = await retrieveAllMedicalRecord();
         if (allMedicalRecordData) {
-          setAllMedicalRecord(allMedicalRecordData);
+          const recordsWithPatientId = allMedicalRecordData.map((record) => {
+            if (!record.patientId) {
+              console.log("type of record name: ", typeof record.id);
+              const generatedPatientId = GeneratePatientId(
+                record.name,
+                record.id
+              );
+              return { ...record, patientId: generatedPatientId };
+            }
+            return record;
+          });
+          setAllMedicalRecord(recordsWithPatientId);
         }
       } catch (error) {
         console.error("Error retrieving medical records:", error);
@@ -40,8 +54,19 @@ export const ViewAllMedicalRecord = () => {
 
   const retrieveAllMedicalRecord = async () => {
     try {
-      const response = await axios.get(`${RECORD_API_URL}`);
-      return response.data.data.recordlist;
+      const response = await fetch(`${RECORD_API_URL}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.data.recordlist;
+      }
     } catch (error) {
       console.error("Error retrieving medical records:", error);
       throw error;
@@ -50,8 +75,16 @@ export const ViewAllMedicalRecord = () => {
 
   const handleDeleteAction = async (recordId) => {
     try {
-      const response = await axios.delete(`${RECORD_API_URL}/${recordId}`);
-      if (response.data.success) {
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
         toast.success("Record Deleted successfully!!!", {
           position: "top-center",
           autoClose: 1000,
@@ -95,8 +128,10 @@ export const ViewAllMedicalRecord = () => {
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
                 <tr className="text-center">
+                  <th scope="col">Complete Check</th>
                   <th scope="col">Id</th>
                   <th scope="col">Patient Id</th>
+                  <th scope="col">Patient Name</th>
                   <th scope="col">Date Created</th>
                   <th scope="col">Record Features</th>
                   <th scope="col">Action</th>
@@ -104,13 +139,31 @@ export const ViewAllMedicalRecord = () => {
               </thead>
               <tbody>
                 {allMedicalRecord.map((medicalRecord) => {
+                  const isComplete = Object.keys(medicalRecord.recordFeatures)
+                    .slice(0, 7)
+                    .every(
+                      (key) =>
+                        medicalRecord.recordFeatures[key] !== "" &&
+                        medicalRecord.recordFeatures[key] !== null
+                    );
                   return (
                     <tr>
+                      <td
+                        style={{
+                          color: isComplete ? "green" : "red",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {isComplete ? "Complete" : "Incomplete"}
+                      </td>
                       <td>
                         <p>{medicalRecord.id}</p>
                       </td>
                       <td>
                         <p>{medicalRecord.patientId}</p>
+                      </td>
+                      <td>
+                        <p>{medicalRecord.name}</p>
                       </td>
                       <td>
                         <p>{medicalRecord.date}</p>

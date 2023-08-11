@@ -14,6 +14,9 @@ import { FeaturesForm } from "./UserComponent/FeaturesForm";
 import { AddMedicalRecordPage } from "./UserComponent/AddMedicalRecordPage";
 import { ViewAllReport } from "./ReportComponent/ViewAllReport";
 import { CustomFeaturesPage } from "./UserComponent/CustomFeaturesPage";
+import { ViewAllResearcher } from "./UserComponent/Researcher/ViewAllResearcher";
+import { ResearcherRegister } from "./UserComponent/Researcher/ResearcherRegister";
+import { ResearcherEdit } from "./UserComponent/Researcher/ResearcherEdit";
 
 export function App() {
   return (
@@ -24,8 +27,17 @@ export function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/user/login" element={<UserLoginForm />} />
         <Route path="/user/doctor/all" element={<ViewAllDoctor />} />
+        <Route path="user/researcher/all" element={<ViewAllResearcher />} />
         <Route path="/user/doctor/register" element={<DoctorRegister />} />
+        <Route
+          path="/user/researcher/register"
+          element={<ResearcherRegister />}
+        />
         <Route path="/user/doctor/update/:id" element={<DoctorEdit />} />
+        <Route
+          path="/user/researcher/update/:id"
+          element={<ResearcherEdit />}
+        />
         <Route path="/record/all" element={<ViewAllMedicalRecord />} />
         <Route path="/record/features/:recordId" element={<FeaturesForm />} />
         <Route path="/add-medical-record" element={<AddMedicalRecordPage />} />
