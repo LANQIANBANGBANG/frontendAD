@@ -19,6 +19,7 @@ const AdminHeader = () => {
     });
     navigate("/");
     sessionStorage.removeItem("active-admin");
+    window.location.reload();
   };
 
   return (

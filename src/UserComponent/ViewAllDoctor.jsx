@@ -19,7 +19,6 @@ const ViewAllDoctor = () => {
 
     getAllDoctor();
   }, []);
-  console.log("All Doctors: ", allDoctor);
 
   const retrieveAllDoctor = async () => {
     const response = await axios.get(`${FINDDOCTOR_API_URL}`);

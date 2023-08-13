@@ -17,6 +17,7 @@ const UserLoginForm = () => {
   const handleUserInput = (e) => {
     setLoginRequest({ ...loginRequest, [e.target.name]: e.target.value });
   };
+  //console.log("log in request: ", loginRequest);
 
   const loginAction = (e) => {
     fetch(`${LOGIN_API_URL}`, {
@@ -32,7 +33,7 @@ const UserLoginForm = () => {
         console.log(res);
 
         const token = res.access_token;
-        const selectedRole = loginRequest.role;
+        const selectedRole = loginRequest.role.toLowerCase();
 
         sessionStorage.setItem("auth-token", token);
         if (selectedRole === "admin") {

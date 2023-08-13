@@ -19,6 +19,7 @@ export const DoctorHeader = () => {
     });
     navigate("/");
     sessionStorage.removeItem("active-doctor");
+    window.page.reload();
   };
 
   return (

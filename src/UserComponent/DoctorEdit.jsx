@@ -21,7 +21,7 @@ export const DoctorEdit = () => {
     role: "DOCTOR",
   });
   const token = sessionStorage.getItem("auth-token");
-  console.log("token on this page: ", token);
+  console.log("doctor on this page: ", doctor);
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -45,18 +45,21 @@ export const DoctorEdit = () => {
 
   const updateDoctor = async (event) => {
     event.preventDefault();
+    console.log("updateDoctor function called");
 
     try {
-      const response = fetch(`${USER_API_URL}`, {
+      console.log("before fetch: ", doctor);
+      debugger;
+      const response = await fetch(`${USER_API_URL}`, {
         method: "PUT",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(doctor),
       });
-
-      window.location.reload(true);
+      console.log("after fetch: ", response);
 
       if (response.data.success) {
         toast.success("Doctor Updated Successfully!!!", {
@@ -83,9 +86,10 @@ export const DoctorEdit = () => {
         });
       }
     } catch (error) {
+      console.error("Error fetching doctor data:", error);
       toast.error("Update Failed. Please Try Again!", {
         position: "top-center",
-        autoClose: 1000,
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -93,6 +97,7 @@ export const DoctorEdit = () => {
         progress: undefined,
       });
     }
+    //window.location.reload(true);
   };
 
   return (
@@ -107,8 +112,14 @@ export const DoctorEdit = () => {
           </div>
           <div className="card-body">
             <form className="row g-3" onSubmit={updateDoctor}>
+              <input
+                type="hidden"
+                name="role"
+                value={doctor.role} // Set the role value
+              />
+
               <div className="col-md-6 mb-3 text-color">
-                <label htmlFor="title" className="form-label">
+                <label htmlFor="firstName" className="form-label">
                   <b> First Name</b>
                 </label>
                 <input
@@ -118,10 +129,11 @@ export const DoctorEdit = () => {
                   name="firstName"
                   onChange={handleUserInput}
                   value={doctor.firstName}
+                  required
                 />
               </div>
               <div className="col-md-6 mb-3 text-color">
-                <label htmlFor="description" className="form-label">
+                <label htmlFor="lastName" className="form-label">
                   <b>Last Name</b>
                 </label>
                 <input
@@ -131,6 +143,7 @@ export const DoctorEdit = () => {
                   name="lastName"
                   onChange={handleUserInput}
                   value={doctor.lastName}
+                  required
                 />
               </div>
 
@@ -145,11 +158,12 @@ export const DoctorEdit = () => {
                   name="emailId"
                   onChange={handleUserInput}
                   value={doctor.emailId}
+                  required
                 />
               </div>
 
               <div className="col-md-6 mb-3">
-                <label htmlFor="quantity" className="form-label">
+                <label htmlFor="password" className="form-label">
                   <b>Password</b>
                 </label>
                 <input
@@ -159,6 +173,7 @@ export const DoctorEdit = () => {
                   name="password"
                   onChange={handleUserInput}
                   value={doctor.password}
+                  required
                 />
               </div>
 
@@ -185,13 +200,14 @@ export const DoctorEdit = () => {
               </div>
 
               <div className="col-md-6 mb-3 text-color">
-                <label htmlFor="bloodGroup" className="form-label">
+                <label htmlFor="specialist" className="form-label">
                   <b>Specialist</b>
                 </label>
                 <select
                   onChange={handleUserInput}
                   className="form-control"
                   name="specialist"
+                  id="specialist"
                   value={doctor.specialist}
                 >
                   <option value="0">Select Specialist</option>
@@ -217,6 +233,7 @@ export const DoctorEdit = () => {
                   name="phone"
                   onChange={handleUserInput}
                   value={doctor.phone}
+                  required
                 />
               </div>
 
@@ -235,11 +252,15 @@ export const DoctorEdit = () => {
               </div>
 
               <div className="d-flex aligns-items-center justify-content-center">
-                <input
+                <button
                   type="submit"
                   className="btn bg-color custom-bg-text"
-                  value="Update Doctor"
-                />
+                  onClick={() => {
+                    console.log("test if this button works");
+                  }}
+                >
+                  Update Doctor
+                </button>
               </div>
 
               <ToastContainer />

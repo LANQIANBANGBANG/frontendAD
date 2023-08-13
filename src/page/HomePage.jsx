@@ -8,20 +8,20 @@ export const HomePage = () => {
   const [allDoctor, setAllDoctor] = useState([]);
 
   //需要展示医生的图片,链接需要改一下
-  const retrieveAllDoctor = async () => {
-    const response = await axios.get("http://localhost:8080/api/doctor/all");
-    return response.data;
-  };
+  // const retrieveAllDoctor = async () => {
+  //   const response = await axios.get("http://localhost:8080/api/doctor/all");
+  //   return response.data;
+  // };
 
-  useEffect(() => {
-    const getAllDoctor = async () => {
-      const allDoctor = await retrieveAllDoctor();
-      if (allDoctor) {
-        setAllDoctor(allDoctor);
-      }
-    };
-    getAllDoctor();
-  }, []);
+  // useEffect(() => {
+  //   const getAllDoctor = async () => {
+  //     const allDoctor = await retrieveAllDoctor();
+  //     if (allDoctor) {
+  //       setAllDoctor(allDoctor);
+  //     }
+  //   };
+  //   getAllDoctor();
+  // }, []);
 
   return (
     <div className="container-fluid mb-2">
