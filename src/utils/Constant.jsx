@@ -13,5 +13,6 @@ export const SPECIALISTS = {
   PSYCHIATRIST: "Psychiatrist",
   UROLOGIST: "Urologist",
   ENT_SPECIALIST: "ENT Specialist",
+  GENERAL: "General Practitioner",
   // Add more specialists here as needed
 };

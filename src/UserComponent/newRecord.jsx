@@ -40,7 +40,7 @@ export const useNewRecord = () => {
       },
       {
         name: "height",
-        label: "Height*",
+        label: "Height*(cm)",
         type: "float",
         isRequired: true,
         isAutoCalculated: false,
@@ -48,7 +48,7 @@ export const useNewRecord = () => {
       },
       {
         name: "weight",
-        label: "Weight*",
+        label: "Weight*(kg)",
         type: "float",
         isRequired: true,
         isAutoCalculated: false,

@@ -5,9 +5,20 @@ import { ButtonGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FINDDOCTOR_API_URL, USER_API_URL } from "../config/config";
 import { toast } from "react-toastify";
+import { Pagination } from "./Pagination";
 
 const ViewAllDoctor = () => {
   const [allDoctor, setAllDoctor] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentDoctors = allDoctor.slice(indexOfFirstItem, indexOfLastItem);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     const getAllDoctor = async () => {
@@ -70,23 +81,35 @@ const ViewAllDoctor = () => {
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
                 <tr className="text-center">
+                  <th scope="col">Complete Check</th>
                   <th scope="col">Specialist</th>
                   <th scope="col">First Name</th>
                   <th scope="col">Last Name</th>
-                  <th scope="col">Age</th>
                   <th scope="col">Email Id</th>
                   <th scope="col">Phone No</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {allDoctor.map((doctor) => {
+                {currentDoctors.map((doctor) => {
+                  const isComplete =
+                    doctor.specialist != null &&
+                    doctor.emailId != null &&
+                    doctor.firstName != null &&
+                    doctor.lastName != null;
                   return (
                     <tr>
+                      <td
+                        style={{
+                          color: isComplete ? "green" : "red",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {isComplete ? "Complete" : "Incomplete"}
+                      </td>
                       <td>{doctor.specialist}</td>
                       <td>{doctor.firstName}</td>
                       <td>{doctor.lastName}</td>
-                      <td>{doctor.age}</td>
                       <td>{doctor.emailId}</td>
                       <td>{doctor.phone}</td>
                       <td>
@@ -110,6 +133,12 @@ const ViewAllDoctor = () => {
           </div>
         </div>
       </div>
+      <Pagination
+        totalItems={allDoctor.length}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

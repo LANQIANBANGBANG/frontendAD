@@ -9,6 +9,7 @@ import { CustomFeatureForm } from "./CustomFeatureForm";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GeneratePatientId } from "../utils/GeneratePatientId";
+import CryptoJS from "crypto-js";
 
 export const AddMedicalRecordPage = () => {
   const navigate = useNavigate();
@@ -114,10 +115,13 @@ export const AddMedicalRecordPage = () => {
         return acc;
       }, {});
       console.log("recordFeatureObj: ", recordFeaturesObj);
+      const combinedString = `${newRecord.name}-${newRecord.date}`;
+      const hashedString = "L" + CryptoJS.SHA256(combinedString).toString();
 
       const postData = {
         name: newRecord.name,
         date: newRecord.date,
+        patientId: hashedString,
         recordFeatures: recordFeaturesObj,
       };
 

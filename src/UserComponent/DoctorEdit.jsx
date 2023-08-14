@@ -11,6 +11,8 @@ export const DoctorEdit = () => {
     id: doctorId,
     firstName: "",
     lastName: "",
+    emailId: "",
+    password: "",
     phone: "",
     role: "",
     age: "",
@@ -19,7 +21,7 @@ export const DoctorEdit = () => {
     role: "DOCTOR",
   });
   const token = sessionStorage.getItem("auth-token");
-  console.log("doctor on this page: ", JSON.stringify(doctor));
+  console.log("token ", token);
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -43,22 +45,36 @@ export const DoctorEdit = () => {
 
   const updateDoctor = async (event) => {
     event.preventDefault();
-    console.log("updateDoctor function called");
+    if (
+      !doctor.firstName ||
+      !doctor.emailId ||
+      !doctor.password ||
+      !doctor.gender ||
+      !doctor.specialist ||
+      !doctor.phone
+    ) {
+      toast.success("Please fill in all required fields", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
 
     try {
-      console.log("before fetch: ", doctor);
       const response = await fetch(`${USER_API_URL}`, {
         method: "PUT",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(doctor),
       });
-      console.log("after fetch: ", response);
-
-      if (response.data.success) {
+      if (response.ok) {
         toast.success("Doctor Updated Successfully!!!", {
           position: "top-center",
           autoClose: 1000,
@@ -71,6 +87,8 @@ export const DoctorEdit = () => {
         setDoctor({
           id: doctorId,
           firstName: "",
+          emailId: "",
+          password: "",
           lastName: "",
           phone: "",
           role: "",
@@ -92,7 +110,6 @@ export const DoctorEdit = () => {
         progress: undefined,
       });
     }
-    //window.location.reload(true);
   };
 
   return (
@@ -107,15 +124,11 @@ export const DoctorEdit = () => {
           </div>
           <div className="card-body">
             <form className="row g-3" onSubmit={updateDoctor}>
-              <input
-                type="hidden"
-                name="role"
-                value={doctor.role} // Set the role value
-              />
+              <input type="hidden" name="role" value={doctor.role} />
 
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="firstName" className="form-label">
-                  <b> First Name</b>
+                  <b> First Name*</b>
                 </label>
                 <input
                   type="text"
@@ -129,29 +142,28 @@ export const DoctorEdit = () => {
               </div>
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="lastName" className="form-label">
-                  <b>Last Name</b>
+                  <b>Last Name*</b>
                 </label>
                 <input
                   type="text"
                   className="form-control"
                   id="lastName"
                   name="lastName"
-                  onChange={handleUserInput}
                   value={doctor.lastName}
+                  readOnly
                   required
                 />
               </div>
 
-              {/* <div className="col-md-6 mb-3 text-color">
+              <div className="col-md-6 mb-3 text-color">
                 <b>
-                  <label className="form-label">Email Id</label>
+                  <label className="form-label">Email Id*</label>
                 </b>
                 <input
                   type="email"
                   className="form-control"
                   id="emailId"
                   name="emailId"
-                  onChange={handleUserInput}
                   value={doctor.emailId}
                   required
                 />
@@ -159,28 +171,29 @@ export const DoctorEdit = () => {
 
               <div className="col-md-6 mb-3">
                 <label htmlFor="password" className="form-label">
-                  <b>Password</b>
+                  <b>Password*</b>
                 </label>
                 <input
                   type="password"
                   className="form-control"
                   id="password"
                   name="password"
-                  onChange={handleUserInput}
                   value={doctor.password}
+                  readOnly
                   required
                 />
-              </div> */}
+              </div>
 
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="sex" className="form-label">
-                  <b>User Gender</b>
+                  <b>Gender*</b>
                 </label>
                 <select
                   onChange={handleUserInput}
                   className="form-control"
                   name="gender"
                   value={doctor.gender}
+                  required
                 >
                   <option value="0">Select Gender</option>
 
@@ -196,7 +209,7 @@ export const DoctorEdit = () => {
 
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="specialist" className="form-label">
-                  <b>Specialist</b>
+                  <b>Specialist*</b>
                 </label>
                 <select
                   onChange={handleUserInput}
@@ -204,6 +217,7 @@ export const DoctorEdit = () => {
                   name="specialist"
                   id="specialist"
                   value={doctor.specialist}
+                  required
                 >
                   <option value="0">Select Specialist</option>
 
@@ -219,7 +233,7 @@ export const DoctorEdit = () => {
 
               <div className="col-md-6 mb-3">
                 <label htmlFor="phone" className="form-label">
-                  <b>Phone No</b>
+                  <b>Phone No*</b>
                 </label>
                 <input
                   type="number"
@@ -247,13 +261,7 @@ export const DoctorEdit = () => {
               </div>
 
               <div className="d-flex aligns-items-center justify-content-center">
-                <button
-                  type="submit"
-                  className="btn bg-color custom-bg-text"
-                  onClick={() => {
-                    console.log("test if this button works");
-                  }}
-                >
+                <button type="submit" className="btn bg-color custom-bg-text">
                   Update Doctor
                 </button>
               </div>

@@ -12,6 +12,8 @@ export const FeaturesForm = () => {
   const { newRecord } = useNewRecord();
   const { recordId } = useParams();
 
+  const token = sessionStorage.getItem("auth-token");
+
   const [features, setFeatures] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
@@ -43,11 +45,16 @@ export const FeaturesForm = () => {
     };
 
     try {
-      const response = await axios.put(
-        `${RECORD_API_URL}/${recordId}`,
-        updatedRecord
-      );
-      if (response.data.success) {
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedRecord),
+      });
+      if (response.ok) {
         toast.success("Features Updated Successfully!!!", {
           position: "top-center",
           autoClose: 1000,
@@ -62,17 +69,34 @@ export const FeaturesForm = () => {
       console.error("Error updating record:", error);
     }
   };
-  console.log("features in the features page: ", features);
 
   useEffect(() => {
     const fetchFeaturesData = async () => {
       try {
-        const response = await axios.get(`${RECORD_API_URL}/${recordId}`);
-
-        const featureData = response.data.data.medicalRecord.recordFeatures;
-        setFeatures(featureData);
+        const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        //debugger
+        if (response.ok) {
+          const responseData = await response.json();
+          const featureData = responseData.data.medicalRecord.recordFeatures;
+          if (featureData === null) {
+            const emptyFeatures = {};
+            newRecord.recordFeatures.forEach((feature) => {
+              emptyFeatures[feature.name] = "";
+            });
+            setFeatures(emptyFeatures);
+          } else {
+            setFeatures(featureData);
+          }
+        }
       } catch (error) {
-        console.error("Error fetching doctor data:", error);
+        console.error("Error fetching record data:", error);
       }
     };
 
@@ -85,7 +109,9 @@ export const FeaturesForm = () => {
         <div className="row align-items-center">
           <div className="col">
             <h2 className="text-center mb-2">Features List</h2>
-            <b className="text-center">Record {recordId}</b>
+            <p className="text-center">
+              <b>Record</b> <i>{recordId}</i>
+            </p>
           </div>
           <div className="col-auto">
             {isEditing ? (
@@ -127,7 +153,7 @@ export const FeaturesForm = () => {
                   {isEditing ? (
                     feature.type === "select" ? (
                       <select
-                        value={features[feature.name]}
+                        value={features[feature.name] || ""}
                         onChange={(e) => {
                           setFeatures((prevFeatures) => ({
                             ...prevFeatures,
@@ -135,6 +161,7 @@ export const FeaturesForm = () => {
                           }));
                         }}
                       >
+                        <option value="">Select an option</option>
                         {feature.options.map((option) => (
                           <option key={option} value={option}>
                             {option}
@@ -144,7 +171,7 @@ export const FeaturesForm = () => {
                     ) : (
                       <input
                         type="text"
-                        value={features[feature.name]}
+                        value={features[feature.name] || ""}
                         onChange={(e) => {
                           setFeatures((prevFeatures) => ({
                             ...prevFeatures,

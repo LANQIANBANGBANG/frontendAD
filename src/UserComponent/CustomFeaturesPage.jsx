@@ -12,6 +12,7 @@ export const CustomFeaturesPage = () => {
   const features = JSON.parse(
     new URLSearchParams(location.search).get("features")
   );
+  const token = sessionStorage.getItem("auth-token");
 
   const [customFeatures, setCustomFeatures] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -38,17 +39,28 @@ export const CustomFeaturesPage = () => {
 
   useEffect(() => {
     const fetchCustomFeaturesData = async () => {
-      const response = await axios.get(`${RECORD_API_URL}/${recordId}`);
-
-      const featureData = response.data.data.medicalRecord.recordFeatures;
-
-      setCustomFeatures(featureData);
-      console.log("Customfeatures", featureData);
+      try {
+        const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const responseData = await response.json();
+          const featureData = responseData.data.medicalRecord.recordFeatures;
+          setCustomFeatures(featureData);
+          console.log("Customfeatures", featureData);
+        }
+      } catch (error) {
+        console.log("Error fetching custom features record", error.message);
+      }
     };
 
     fetchCustomFeaturesData();
   }, [recordId]);
-  //console.log("newRecordFeatures", newRecord.recordFeatures);
 
   const newRecordFeatureNames = newRecord.recordFeatures.map(
     (feature) => feature.name
@@ -57,7 +69,7 @@ export const CustomFeaturesPage = () => {
     .filter((name) => !newRecordFeatureNames.includes(name))
     .map((name) => ({ name, value: customFeatures[name] }));
 
-  console.log("filteredCustomFeatures", filteredCustomFeatures);
+  console.log("token :", token);
 
   const handleDeleteFeature = (name) => {
     setCustomFeatures((prevFeatures) => {
@@ -70,13 +82,21 @@ export const CustomFeaturesPage = () => {
 
   const updateCustomFeatures = async (updatedFeatures) => {
     try {
+      console.log("updatedfeatures: ", updatedFeatures);
       const updatedRecord = {
         recordFeatures: updatedFeatures,
       };
-      const response = await axios.put(
-        `${RECORD_API_URL}/${recordId}`,
-        updatedRecord
-      );
+
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedRecord),
+      });
+
       if (response.data.success) {
         toast.success("Features Updated Successfully!!!", {
           position: "top-center",
@@ -92,37 +112,46 @@ export const CustomFeaturesPage = () => {
       console.error("Error updating record: ", error);
     }
   };
+  //console.log("filteredCustomFeatures,", filteredCustomFeatures);
   return (
     <div>
       <h2>Custom Features List</h2>
       <form>
-        <ul>
-          {filteredCustomFeatures.map((feature) => (
-            <li key={feature.name}>
-              <b>{feature.name}</b>:
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={feature.value}
-                  onChange={(e) => {
-                    setCustomFeatures((prevFeatures) => ({
-                      ...prevFeatures,
-                      [feature.name]: e.target.value,
-                    }));
-                  }}
-                />
-              ) : (
-                feature.value
-              )}
-              <button
-                type="button"
-                onClick={() => handleDeleteFeature(feature.name)}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
+        {filteredCustomFeatures.length != 0 ? (
+          <ul>
+            {filteredCustomFeatures.map((feature) => (
+              <li key={feature.name}>
+                <b>{feature.name}</b>:
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={feature.value}
+                    onChange={(e) => {
+                      setCustomFeatures((prevFeatures) => ({
+                        ...prevFeatures,
+                        [feature.name]: e.target.value,
+                      }));
+                    }}
+                  />
+                ) : (
+                  feature.value
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleDeleteFeature(feature.name)}
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div class="alert alert-warning" role="alert">
+            <span style={{ display: "block", margin: "auto" }}>
+              Oops! Doctor do not add custom features for this record!
+            </span>
+          </div>
+        )}
       </form>
       <div>
         <button

@@ -12,7 +12,7 @@ export const ViewAllMedicalRecord = () => {
   const [allMedicalRecord, setAllMedicalRecord] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 9;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -24,7 +24,7 @@ export const ViewAllMedicalRecord = () => {
     setCurrentPage(page);
   };
   const token = sessionStorage.getItem("auth-token");
-  console.log("token: ", token);
+  //console.log("token: ", token);
 
   useEffect(() => {
     const getAllMedicalRecord = async () => {
@@ -33,13 +33,6 @@ export const ViewAllMedicalRecord = () => {
         if (allMedicalRecordData) {
           const recordsWithPatientId = allMedicalRecordData.map((record) => {
             const recordFeatures = record.recordFeatures || {};
-            if (!record.patientId) {
-              const generatedPatientId = GeneratePatientId(
-                record.name,
-                record.id
-              );
-              return { ...record, patientId: generatedPatientId };
-            }
             return record;
           });
           setAllMedicalRecord(recordsWithPatientId);
@@ -130,6 +123,7 @@ export const ViewAllMedicalRecord = () => {
                 <tr className="text-center">
                   <th scope="col">Complete Check</th>
                   <th scope="col">Record Id</th>
+                  <th scope="col">Patient Id</th>
                   <th scope="col">Patient Name</th>
                   <th scope="col">Date Created</th>
                   <th scope="col">Record Features</th>
@@ -137,7 +131,7 @@ export const ViewAllMedicalRecord = () => {
                 </tr>
               </thead>
               <tbody>
-                {allMedicalRecord.map((medicalRecord) => {
+                {currentRecords.map((medicalRecord) => {
                   const isComplete =
                     medicalRecord.recordFeatures != null &&
                     Object.keys(medicalRecord.recordFeatures)
@@ -158,13 +152,20 @@ export const ViewAllMedicalRecord = () => {
                         {isComplete ? "Complete" : "Incomplete"}
                       </td>
                       <td>
-                        <p>{medicalRecord.id}</p>
+                        <p>{medicalRecord.id.slice(0, 6) + "****"}</p>
+                      </td>
+                      <td>
+                        <p>{medicalRecord.patientId.slice(0, 6) + "****"}</p>
                       </td>
                       <td>
                         <p>{medicalRecord.name}</p>
                       </td>
                       <td>
-                        <p>{medicalRecord.date}</p>
+                        <p>
+                          {new Date(medicalRecord.date)
+                            .toISOString()
+                            .slice(0, 10)}
+                        </p>
                       </td>
                       <td>
                         <Link to={`/record/features/${medicalRecord.id}`}>
