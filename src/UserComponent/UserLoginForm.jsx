@@ -13,52 +13,59 @@ const UserLoginForm = () => {
     password: "",
     role: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleUserInput = (e) => {
     setLoginRequest({ ...loginRequest, [e.target.name]: e.target.value });
   };
-  //console.log("log in request: ", loginRequest);
+  console.log("log in request: ", loginRequest);
 
-  const loginAction = (e) => {
-    fetch(`${LOGIN_API_URL}`, {
+  const loginAction = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(`${LOGIN_API_URL}`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(loginRequest),
-    }).then((result) => {
-      console.log("result", result);
-      result.json().then((res) => {
-        console.log(res);
-
-        const token = res.access_token;
-        const selectedRole = loginRequest.role.toLowerCase();
-
-        sessionStorage.setItem("auth-token", token);
-        if (selectedRole === "admin") {
-          sessionStorage.setItem("active-admin", JSON.stringify(res));
-        } else if (selectedRole === "doctor") {
-          sessionStorage.setItem("active-doctor", JSON.stringify(res));
-        } else if (selectedRole === "researcher") {
-          sessionStorage.setItem("active-researcher", JSON.stringify(res));
-        }
-
-        toast.success("logged in successfully!!!", {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
-        navigate("/");
-        window.location.reload(true);
-      });
     });
-    e.preventDefault();
+
+    if (response.ok) {
+      const res = await response.json();
+      const token = res.access_token;
+      const selectedRole = loginRequest.role.toLowerCase();
+
+      sessionStorage.setItem("auth-token", token);
+      if (selectedRole === "admin") {
+        sessionStorage.setItem("active-admin", JSON.stringify(res));
+      } else if (selectedRole === "doctor") {
+        sessionStorage.setItem("active-doctor", JSON.stringify(res));
+      } else if (selectedRole === "researcher") {
+        sessionStorage.setItem("active-researcher", JSON.stringify(res));
+      }
+
+      toast.success("logged in successfully!!!", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      navigate("/");
+      window.location.reload(true);
+    } else {
+      setErrorMessage(
+        "Something wrong with your credentials. Please try again!"
+      );
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
+    }
   };
 
   return (
@@ -72,6 +79,12 @@ const UserLoginForm = () => {
             <h4 className="card-title">User Login</h4>
           </div>
           <div className="card-body">
+            {errorMessage !== "" && (
+              <div className="alert alert-danger" role="alert">
+                {errorMessage}
+              </div>
+            )}
+
             <form>
               <div class="mb-3 text-color">
                 <label for="role" class="form-label">

@@ -11,6 +11,7 @@ const DoctorRegister = () => {
     password: "",
     role: "DOCTOR",
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleUserInput = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -20,6 +21,18 @@ const DoctorRegister = () => {
     event.preventDefault();
 
     try {
+      if (user.password !== confirmPassword) {
+        toast.error("Passwords do not match. Please confirm your password.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        return;
+      }
       const response = await fetch(`${REGISTER_API_URL}`, {
         method: "POST",
         headers: {
@@ -30,6 +43,7 @@ const DoctorRegister = () => {
       });
 
       if (response.ok) {
+        setConfirmPassword("");
         toast.success("Doctor Registered successfully!!!", {
           position: "top-center",
           autoClose: 1000,
@@ -65,14 +79,14 @@ const DoctorRegister = () => {
       <div className="mt-2 d-flex aligns-items-center justify-content-center ms-2 me-2 mb-2">
         <div
           className="card form-card border-color text-color custom-bg"
-          style={{ width: "50rem" }}
+          style={{ width: "25rem" }}
         >
           <div className="card-header bg-color custom-bg-text text-center">
             <h5 className="card-title">Register {user.role}</h5>
           </div>
           <div className="card-body">
             <form className="row g-3" onSubmit={saveUser}>
-              <div className="col-md-6 mb-3 text-color">
+              <div className="mb-3 text-color">
                 <b>
                   <label className="form-label">Email Id</label>
                 </b>
@@ -86,8 +100,8 @@ const DoctorRegister = () => {
                 />
               </div>
 
-              <div className="col-md-6 mb-3">
-                <label htmlFor="quantity" className="form-label">
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
                   <b>Password</b>
                 </label>
                 <input
@@ -97,6 +111,20 @@ const DoctorRegister = () => {
                   name="password"
                   onChange={handleUserInput}
                   value={user.password}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="confirmPassword" className="form-label">
+                  <b>Confirm Password</b>
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  value={confirmPassword}
                 />
               </div>
 

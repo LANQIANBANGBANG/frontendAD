@@ -11,8 +11,6 @@ export const DoctorEdit = () => {
     id: doctorId,
     firstName: "",
     lastName: "",
-    emailId: "",
-    password: "",
     phone: "",
     role: "",
     age: "",
@@ -21,7 +19,7 @@ export const DoctorEdit = () => {
     role: "DOCTOR",
   });
   const token = sessionStorage.getItem("auth-token");
-  console.log("doctor on this page: ", doctor);
+  console.log("doctor on this page: ", JSON.stringify(doctor));
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -49,7 +47,6 @@ export const DoctorEdit = () => {
 
     try {
       console.log("before fetch: ", doctor);
-      debugger;
       const response = await fetch(`${USER_API_URL}`, {
         method: "PUT",
         headers: {
@@ -75,8 +72,6 @@ export const DoctorEdit = () => {
           id: doctorId,
           firstName: "",
           lastName: "",
-          emailId: "",
-          password: "",
           phone: "",
           role: "",
           age: "",
@@ -147,7 +142,7 @@ export const DoctorEdit = () => {
                 />
               </div>
 
-              <div className="col-md-6 mb-3 text-color">
+              {/* <div className="col-md-6 mb-3 text-color">
                 <b>
                   <label className="form-label">Email Id</label>
                 </b>
@@ -175,7 +170,7 @@ export const DoctorEdit = () => {
                   value={doctor.password}
                   required
                 />
-              </div>
+              </div> */}
 
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="sex" className="form-label">

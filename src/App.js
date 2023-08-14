@@ -24,7 +24,7 @@ export function App() {
       <Header />
       <Routes>
         <Route exact path="/" element={<HomePage />} />
-        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/about" element={<ContactUs />} />
         <Route path="/user/login" element={<UserLoginForm />} />
         <Route path="/user/doctor/all" element={<ViewAllDoctor />} />
         <Route path="user/researcher/all" element={<ViewAllResearcher />} />

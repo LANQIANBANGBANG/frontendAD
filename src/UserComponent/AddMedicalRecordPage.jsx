@@ -19,7 +19,7 @@ export const AddMedicalRecordPage = () => {
   const [showAddCustomFeaturesButton, setShowAddCustomFeautresButton] =
     useState(true);
   const token = sessionStorage.getItem("auth-token");
-  console.log("token: ", token);
+  //console.log("token: ", token);
 
   const handlePatientNameChange = (e) => {
     setNewRecord((prev) => ({
@@ -45,7 +45,7 @@ export const AddMedicalRecordPage = () => {
         feature.name === name ? { ...feature, value } : feature
       ),
     }));
-    console.log(newRecord);
+    //console.log(newRecord);
   };
   const handleAddCustomFeatures = () => {
     setShowCustomFeatureForm(true);
@@ -120,7 +120,7 @@ export const AddMedicalRecordPage = () => {
         date: newRecord.date,
         recordFeatures: recordFeaturesObj,
       };
-      //const response = await axios.post(RECORD_API_URL, postData);
+
       const response = await fetch(`${RECORD_API_URL}`, {
         method: "POST",
         headers: {
@@ -131,7 +131,6 @@ export const AddMedicalRecordPage = () => {
         body: JSON.stringify(postData),
       });
 
-      console.log("response of adding: ", response);
       if (response.ok) {
         setNewRecord(initialRecordState);
         navigate("/record/all");

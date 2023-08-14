@@ -24,7 +24,7 @@ export const ViewAllMedicalRecord = () => {
     setCurrentPage(page);
   };
   const token = sessionStorage.getItem("auth-token");
-  //console.log("token: ", token);
+  console.log("token: ", token);
 
   useEffect(() => {
     const getAllMedicalRecord = async () => {
@@ -32,8 +32,8 @@ export const ViewAllMedicalRecord = () => {
         const allMedicalRecordData = await retrieveAllMedicalRecord();
         if (allMedicalRecordData) {
           const recordsWithPatientId = allMedicalRecordData.map((record) => {
+            const recordFeatures = record.recordFeatures || {};
             if (!record.patientId) {
-              console.log("type of record name: ", typeof record.id);
               const generatedPatientId = GeneratePatientId(
                 record.name,
                 record.id
@@ -129,8 +129,7 @@ export const ViewAllMedicalRecord = () => {
               <thead className="table-bordered border-color bg-color custom-bg-text">
                 <tr className="text-center">
                   <th scope="col">Complete Check</th>
-                  <th scope="col">Id</th>
-                  <th scope="col">Patient Id</th>
+                  <th scope="col">Record Id</th>
                   <th scope="col">Patient Name</th>
                   <th scope="col">Date Created</th>
                   <th scope="col">Record Features</th>
@@ -139,13 +138,15 @@ export const ViewAllMedicalRecord = () => {
               </thead>
               <tbody>
                 {allMedicalRecord.map((medicalRecord) => {
-                  const isComplete = Object.keys(medicalRecord.recordFeatures)
-                    .slice(0, 7)
-                    .every(
-                      (key) =>
-                        medicalRecord.recordFeatures[key] !== "" &&
-                        medicalRecord.recordFeatures[key] !== null
-                    );
+                  const isComplete =
+                    medicalRecord.recordFeatures != null &&
+                    Object.keys(medicalRecord.recordFeatures)
+                      .slice(0, 7)
+                      .every(
+                        (key) =>
+                          medicalRecord.recordFeatures[key] !== "" &&
+                          medicalRecord.recordFeatures[key] !== null
+                      );
                   return (
                     <tr>
                       <td
@@ -158,9 +159,6 @@ export const ViewAllMedicalRecord = () => {
                       </td>
                       <td>
                         <p>{medicalRecord.id}</p>
-                      </td>
-                      <td>
-                        <p>{medicalRecord.patientId}</p>
                       </td>
                       <td>
                         <p>{medicalRecord.name}</p>
