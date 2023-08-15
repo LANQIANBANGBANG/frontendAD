@@ -1,33 +1,32 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import React from "react";
-import { ButtonGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FINDRESEARCHER_API_URL, USER_API_URL } from "../../config/config";
+import { FIND_API_URL, USER_API_URL } from "../../config/config";
 
-export const ViewAllResearcher = () => {
-  const [allResearcher, setAllResearcher] = useState([]);
+export const ViewAllUser = ({ userType }) => {
+  const [allUser, setAllUser] = useState([]);
 
   useEffect(() => {
-    const getAllResearcher = async () => {
-      const allResearcher = await retrieveAllResearcher();
-      if (allResearcher) {
-        setAllResearcher(allResearcher);
+    const getAllUser = async () => {
+      const retrieveAllUser = async () => {
+        const response = await axios.get(`${FIND_API_URL}/${userType}`);
+        return response.data.data.roleList;
+      };
+
+      const allUser = await retrieveAllUser();
+      if (allUser) {
+        setAllUser(allUser);
       }
     };
 
-    getAllResearcher();
-  }, []);
-  console.log("All Researchers: ", allResearcher);
+    getAllUser();
+  }, [userType]);
+  console.log("All Users: ", allUser);
 
-  const retrieveAllResearcher = async () => {
-    const response = await axios.get(`${FINDRESEARCHER_API_URL}`);
-    return response.data.data.roleList;
-  };
-
-  const deleteResearcher = (researcherId) => {
-    fetch(`${USER_API_URL}/${researcherId}`, {
+  const deleteUser = (userId) => {
+    fetch(`${USER_API_URL}/${userId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -38,15 +37,15 @@ export const ViewAllResearcher = () => {
         if (result.ok) {
           return result.json();
         } else {
-          throw new Error("Failed to delete researcher");
+          throw new Error(`Failed to delete ${userType}`);
         }
       })
       .then((res) => {
-        toast.success("Researcher deleted successfully.");
+        toast.success(`${userType} deleted successfully`);
         window.location.reload(true);
       })
       .catch((error) => {
-        toast.error("An error occurred whilte deleting the researcher.");
+        toast.error(`An error occurred whilte deleting the ${userType}`);
       });
   };
 
@@ -59,8 +58,23 @@ export const ViewAllResearcher = () => {
         }}
       >
         <div className="card-header custom-bg-text text-center bg-color">
-          <h2>All Researcher</h2>
+          <h2>
+            {userType.substring(0, 1).toUpperCase() +
+              userType.toLowerCase().substring(1)}{" "}
+            List
+          </h2>
         </div>
+        <Link
+          to={`/user/${userType}/register`}
+          className="nav-link active ms-5 mt-2"
+          aria-current="page"
+        >
+          <button className="btn btn-warning">
+            Register{" "}
+            {userType.substring(0, 1).toUpperCase() +
+              userType.toLowerCase().substring(1)}
+          </button>
+        </Link>
         <div
           className="card-body"
           style={{
@@ -78,24 +92,26 @@ export const ViewAllResearcher = () => {
                 </tr>
               </thead>
               <tbody>
-                {allResearcher.map((researcher) => {
+                {allUser.map((user) => {
                   return (
                     <tr>
-                      <td>{researcher.firstName}</td>
-                      <td>{researcher.lastName}</td>
-                      <td>{researcher.emailId}</td>
+                      <td>{user.firstName}</td>
+                      <td>{user.lastName}</td>
+                      <td>{user.emailId}</td>
                       <td>
-                        <ButtonGroup>
+                        <div>
                           <button
-                            className="btn btn-primary me-1"
-                            onClick={() => deleteResearcher(researcher.id)}
+                            className="btn btn-outline-danger me-1"
+                            onClick={() => deleteUser(user.id)}
                           >
                             Delete
                           </button>
-                          <Link to={`/user/researcher/update/${researcher.id}`}>
-                            <button className="btn btn-primary ">Update</button>
+                          <Link to={`/user/${userType}/update/${user.id}`}>
+                            <button className="btn btn-outline-warning ">
+                              Update
+                            </button>
                           </Link>
-                        </ButtonGroup>
+                        </div>
                       </td>
                     </tr>
                   );

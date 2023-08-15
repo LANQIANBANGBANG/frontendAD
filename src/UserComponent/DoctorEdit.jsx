@@ -99,8 +99,8 @@ export const DoctorEdit = () => {
         });
       }
     } catch (error) {
-      console.error("Error fetching doctor data:", error);
-      toast.error("Update Failed. Please Try Again!", {
+      //console.error("Doctor Update Failed:", error);
+      toast.error("Doctor Update Failed. Please Try it Later!", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -149,8 +149,8 @@ export const DoctorEdit = () => {
                   className="form-control"
                   id="lastName"
                   name="lastName"
+                  onChange={handleUserInput}
                   value={doctor.lastName}
-                  readOnly
                   required
                 />
               </div>

@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 export const FeaturesForm = () => {
   const { newRecord } = useNewRecord();
   const { recordId } = useParams();
+  const [patientName, setPatientName] = useState("");
 
   const token = sessionStorage.getItem("auth-token");
 
@@ -19,6 +20,8 @@ export const FeaturesForm = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const encodedFeatures = encodeURIComponent(JSON.stringify(features));
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -69,6 +72,7 @@ export const FeaturesForm = () => {
       console.error("Error updating record:", error);
     }
   };
+  console.log("patient name", JSON.stringify(patientName));
 
   useEffect(() => {
     const fetchFeaturesData = async () => {
@@ -81,10 +85,12 @@ export const FeaturesForm = () => {
             "Content-Type": "application/json",
           },
         });
-        //debugger
+
         if (response.ok) {
           const responseData = await response.json();
+          setPatientName(responseData.data.medicalRecord.name);
           const featureData = responseData.data.medicalRecord.recordFeatures;
+          //console.log("featureData: ", featureData);
           if (featureData === null) {
             const emptyFeatures = {};
             newRecord.recordFeatures.forEach((feature) => {
@@ -108,10 +114,15 @@ export const FeaturesForm = () => {
       <div className="card form-card ms-2 me-2 mb-5 custom-bg border-color ">
         <div className="row align-items-center">
           <div className="col">
-            <h2 className="text-center mb-2">Features List</h2>
-            <p className="text-center">
-              <b>Record</b> <i>{recordId}</i>
-            </p>
+            <h2 className="text-center mb-2">Medical Report</h2>
+            <div className="d-flex justify-content-center">
+              <p className="me-4">
+                <b>Record</b> <i>{recordId}</i>
+              </p>
+              <p>
+                <b>Patient</b> <i>{patientName}</i>
+              </p>
+            </div>
           </div>
           <div className="col-auto">
             {isEditing ? (
@@ -186,10 +197,15 @@ export const FeaturesForm = () => {
                 </td>
               </tr>
             ))}
-            <Link
+            {/* <Link
               to={`/custom-features/${recordId}?features=${JSON.stringify(
                 features
               )}`}
+            >
+              <button className="btn btn-primary">Show Custom Features</button>
+            </Link> */}
+            <Link
+              to={`/custom-features/${recordId}?features=${encodedFeatures}`}
             >
               <button className="btn btn-primary">Show Custom Features</button>
             </Link>

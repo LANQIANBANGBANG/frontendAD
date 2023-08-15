@@ -9,9 +9,14 @@ export const CustomFeaturesPage = () => {
   const { recordId } = useParams();
   const { newRecord } = useNewRecord();
   const location = useLocation();
-  const features = JSON.parse(
-    new URLSearchParams(location.search).get("features")
-  );
+  // const features = JSON.parse(
+  //   new URLSearchParams(location.search).get("features")
+  // );
+  const queryParams = new URLSearchParams(location.search);
+  const encodedFeatures = queryParams.get("features");
+  const features = JSON.parse(decodeURIComponent(encodedFeatures));
+  const [newFeature, setNewFeature] = useState({ name: "", value: "" });
+
   const token = sessionStorage.getItem("auth-token");
 
   const [customFeatures, setCustomFeatures] = useState([]);
@@ -65,9 +70,11 @@ export const CustomFeaturesPage = () => {
   const newRecordFeatureNames = newRecord.recordFeatures.map(
     (feature) => feature.name
   );
-  const filteredCustomFeatures = Object.keys(customFeatures)
-    .filter((name) => !newRecordFeatureNames.includes(name))
-    .map((name) => ({ name, value: customFeatures[name] }));
+  const filteredCustomFeatures = customFeatures
+    ? Object.keys(customFeatures)
+        .filter((name) => !newRecordFeatureNames.includes(name))
+        .map((name) => ({ name, value: customFeatures[name] }))
+    : [];
 
   console.log("token :", token);
 
@@ -82,10 +89,11 @@ export const CustomFeaturesPage = () => {
 
   const updateCustomFeatures = async (updatedFeatures) => {
     try {
-      console.log("updatedfeatures: ", updatedFeatures);
+      //console.log("updatedfeatures: ", updatedFeatures);
       const updatedRecord = {
         recordFeatures: updatedFeatures,
       };
+      console.log("updateRecord: ", updatedRecord);
 
       const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
         method: "PUT",
@@ -97,7 +105,7 @@ export const CustomFeaturesPage = () => {
         body: JSON.stringify(updatedRecord),
       });
 
-      if (response.data.success) {
+      if (response.ok) {
         toast.success("Features Updated Successfully!!!", {
           position: "top-center",
           autoClose: 1000,
@@ -116,11 +124,11 @@ export const CustomFeaturesPage = () => {
   return (
     <div>
       <h2>Custom Features List</h2>
-      <form>
+      <form className="form">
         {filteredCustomFeatures.length != 0 ? (
-          <ul>
+          <ul className="list-group">
             {filteredCustomFeatures.map((feature) => (
-              <li key={feature.name}>
+              <li key={feature.name} className="list-group-item">
                 <b>{feature.name}</b>:
                 {isEditing ? (
                   <input
@@ -190,6 +198,51 @@ export const CustomFeaturesPage = () => {
           </button>
         )}
       </div>
+      <form className="form-group">
+        <div className="border p-3" style={{ width: 250 }}>
+          <div className="form-group">
+            <label>Feature Name</label>
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Feature Name"
+              value={newFeature.name}
+              onChange={(e) =>
+                setNewFeature({ ...newFeature, name: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Feature Value</label>
+            <input
+              className="form-control"
+              type="text"
+              placeholder="Feature Value"
+              value={newFeature.value}
+              onChange={(e) =>
+                setNewFeature({ ...newFeature, value: e.target.value })
+              }
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-success mt-2"
+            onClick={() => {
+              if (newFeature.name && newFeature.value) {
+                updateCustomFeatures({
+                  ...customFeatures,
+                  [newFeature.name]: newFeature.value,
+                });
+                setNewFeature({ name: "", value: "" });
+              }
+            }}
+          >
+            Add Custom Feature
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

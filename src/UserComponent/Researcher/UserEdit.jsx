@@ -4,56 +4,55 @@ import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { USER_API_URL } from "../../config/config";
 
-export const ResearcherEdit = () => {
-  const { id: researcherId } = useParams();
-  const [researcher, setResearcher] = useState({
-    id: researcherId,
+export const UserEdit = () => {
+  const { userType, userId } = useParams();
+  const [user, setUser] = useState({
+    id: userId,
     firstName: "",
     lastName: "",
     emailId: "",
     password: "",
-    role: "RESEARCHER",
+    role: userType,
   });
   const token = sessionStorage.getItem("auth-token");
   //console.log("token on this page: ", token);
 
   useEffect(() => {
-    const fetchResearcherData = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${USER_API_URL}/${researcherId}`);
-        const researcherData = response.data.data.user;
-        setResearcher(researcherData);
+        const response = await axios.get(`${USER_API_URL}/${userId}`);
+        const userData = response.data.data.user;
+        setUser(userData);
       } catch (error) {
-        console.error("Error fetching researcher data:", error);
+        console.error("Error fetching user data:", error);
       }
     };
 
-    fetchResearcherData();
-  }, [researcherId]);
+    fetchUserData();
+  }, [userId]);
 
   const handleUserInput = (event) => {
     const { name, value } = event.target;
 
-    setResearcher({ ...researcher, [name]: value });
+    setUser({ ...user, [name]: value });
   };
+  //console.log("user on this page: ", researcher);
 
-  const updateResearcher = async (event) => {
+  const updateUser = async (event) => {
     event.preventDefault();
 
     try {
-      const response = fetch(`${USER_API_URL}`, {
+      const response = await fetch(`${USER_API_URL}`, {
         method: "PUT",
         headers: {
           Accept: "application/json",
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(user),
       });
 
-      window.location.reload(true);
-
-      if (response.data.success) {
-        toast.success("Researcher Updated Successfully!!!", {
+      if (response.ok) {
+        toast.success(`${userType} Updated Successfully!!!`, {
           position: "top-center",
           autoClose: 1000,
           hideProgressBar: false,
@@ -62,17 +61,17 @@ export const ResearcherEdit = () => {
           draggable: true,
           progress: undefined,
         });
-        setResearcher({
-          id: researcherId,
+        setUser({
+          id: userId,
           firstName: "",
           lastName: "",
           emailId: "",
           password: "",
-          role: "DOCTOR",
+          role: userType,
         });
       }
     } catch (error) {
-      toast.error("Update Failed. Please Try Again!", {
+      toast.error(`${userType} Update Failed. Please Try it Later!`, {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: false,
@@ -92,10 +91,14 @@ export const ResearcherEdit = () => {
           style={{ width: "50rem" }}
         >
           <div className="card-header bg-color custom-bg-text text-center">
-            <h5 className="card-title">Edit Researcher</h5>
+            <h5 className="card-title">
+              Edit{" "}
+              {userType.substring(0, 1).toUpperCase() +
+                userType.toLowerCase().substring(1)}
+            </h5>
           </div>
           <div className="card-body">
-            <form className="row g-3" onSubmit={updateResearcher}>
+            <form className="row g-3" onSubmit={updateUser}>
               <div className="col-md-6 mb-3 text-color">
                 <label htmlFor="title" className="form-label">
                   <b> First Name</b>
@@ -106,7 +109,7 @@ export const ResearcherEdit = () => {
                   id="firstName"
                   name="firstName"
                   onChange={handleUserInput}
-                  value={researcher.firstName}
+                  value={user.firstName}
                 />
               </div>
               <div className="col-md-6 mb-3 text-color">
@@ -119,7 +122,7 @@ export const ResearcherEdit = () => {
                   id="lastName"
                   name="lastName"
                   onChange={handleUserInput}
-                  value={researcher.lastName}
+                  value={user.lastName}
                 />
               </div>
 
@@ -132,8 +135,7 @@ export const ResearcherEdit = () => {
                   className="form-control"
                   id="emailId"
                   name="emailId"
-                  onChange={handleUserInput}
-                  value={researcher.emailId}
+                  value={user.emailId}
                 />
               </div>
 
@@ -146,8 +148,7 @@ export const ResearcherEdit = () => {
                   className="form-control"
                   id="password"
                   name="password"
-                  onChange={handleUserInput}
-                  value={researcher.password}
+                  value={user.password}
                 />
               </div>
 
@@ -155,7 +156,10 @@ export const ResearcherEdit = () => {
                 <input
                   type="submit"
                   className="btn bg-color custom-bg-text"
-                  value="Update Researcher"
+                  value={`Update ${
+                    userType.substring(0, 1).toUpperCase() +
+                    userType.toLowerCase().substring(1)
+                  }`}
                 />
               </div>
 

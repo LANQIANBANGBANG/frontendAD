@@ -14,9 +14,9 @@ import { FeaturesForm } from "./UserComponent/FeaturesForm";
 import { AddMedicalRecordPage } from "./UserComponent/AddMedicalRecordPage";
 import { ViewAllReport } from "./ReportComponent/ViewAllReport";
 import { CustomFeaturesPage } from "./UserComponent/CustomFeaturesPage";
-import { ViewAllResearcher } from "./UserComponent/Researcher/ViewAllResearcher";
-import { ResearcherRegister } from "./UserComponent/Researcher/ResearcherRegister";
-import { ResearcherEdit } from "./UserComponent/Researcher/ResearcherEdit";
+import { ViewAllUser } from "./UserComponent/Researcher/ViewAllUser";
+import { UserRegister } from "./UserComponent/Researcher/UserRegister";
+import { UserEdit } from "./UserComponent/Researcher/UserEdit";
 
 export function App() {
   return (
@@ -27,17 +27,18 @@ export function App() {
         <Route path="/about" element={<ContactUs />} />
         <Route path="/user/login" element={<UserLoginForm />} />
         <Route path="/user/doctor/all" element={<ViewAllDoctor />} />
-        <Route path="user/researcher/all" element={<ViewAllResearcher />} />
-        <Route path="/user/doctor/register" element={<DoctorRegister />} />
         <Route
-          path="/user/researcher/register"
-          element={<ResearcherRegister />}
+          path="/user/nurse/all"
+          element={<ViewAllUser userType="NURSE" />}
         />
+        <Route
+          path="user/researcher/all"
+          element={<ViewAllUser userType="RESEARCHER" />}
+        />
+        <Route path="/user/:userType/register" element={<UserRegister />} />
         <Route path="/user/doctor/update/:id" element={<DoctorEdit />} />
-        <Route
-          path="/user/researcher/update/:id"
-          element={<ResearcherEdit />}
-        />
+        <Route path="/user/:userType/update/:userId" element={<UserEdit />} />
+
         <Route path="/record/all" element={<ViewAllMedicalRecord />} />
         <Route path="/record/features/:recordId" element={<FeaturesForm />} />
         <Route path="/add-medical-record" element={<AddMedicalRecordPage />} />

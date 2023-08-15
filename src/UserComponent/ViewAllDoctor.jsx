@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import { FINDDOCTOR_API_URL, USER_API_URL } from "../config/config";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
+import { SPECIALISTS } from "../utils/Constant";
 
 const ViewAllDoctor = () => {
   const [allDoctor, setAllDoctor] = useState([]);
+  const [originalDoctorList, setOriginalDoctorList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
@@ -16,6 +18,7 @@ const ViewAllDoctor = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDoctors = allDoctor.slice(indexOfFirstItem, indexOfLastItem);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -24,12 +27,20 @@ const ViewAllDoctor = () => {
     const getAllDoctor = async () => {
       const allDoctor = await retrieveAllDoctor();
       if (allDoctor) {
+        setOriginalDoctorList(allDoctor);
         setAllDoctor(allDoctor);
       }
     };
 
     getAllDoctor();
   }, []);
+
+  const handleSearch = () => {
+    const filteredDoctors = allDoctor.filter((doctor) =>
+      selectedDepartment ? doctor.specialist === selectedDepartment : true
+    );
+    setAllDoctor(filteredDoctors);
+  };
 
   const retrieveAllDoctor = async () => {
     const response = await axios.get(`${FINDDOCTOR_API_URL}`);
@@ -69,8 +80,49 @@ const ViewAllDoctor = () => {
         }}
       >
         <div className="card-header custom-bg-text text-center bg-color">
-          <h2>All Doctor</h2>
+          <h2>Doctor List</h2>
         </div>
+        <div className="d-flex flex-column ms-5">
+          <div className="d-flex align-items-center mt-1">
+            <div className="d-flex me-5">
+              <select
+                className="form-select form-select-sm me-1"
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
+              >
+                <option value="">Select Department</option>
+                {Object.values(SPECIALISTS).map((s) => {
+                  return (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  );
+                })}
+              </select>
+
+              <button className="btn btn-primary me-1" onClick={handleSearch}>
+                Search
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setSelectedDepartment("");
+                  setAllDoctor(originalDoctorList);
+                }}
+              >
+                Reset
+              </button>
+            </div>
+            <Link
+              to="/user/DOCTOR/register"
+              className="nav-link active text-color"
+              aria-current="page"
+            >
+              <button className="btn btn-warning">Register Doctor</button>
+            </Link>
+          </div>
+        </div>
+
         <div
           className="card-body"
           style={{
@@ -81,7 +133,7 @@ const ViewAllDoctor = () => {
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
                 <tr className="text-center">
-                  <th scope="col">Complete Check</th>
+                  <th scope="col">Status</th>
                   <th scope="col">Specialist</th>
                   <th scope="col">First Name</th>
                   <th scope="col">Last Name</th>
@@ -113,17 +165,19 @@ const ViewAllDoctor = () => {
                       <td>{doctor.emailId}</td>
                       <td>{doctor.phone}</td>
                       <td>
-                        <ButtonGroup>
+                        <div>
                           <button
-                            className="btn btn-primary me-1"
+                            className="btn btn-outline-danger me-1"
                             onClick={() => deleteDoctor(doctor.id)}
                           >
                             Delete
                           </button>
                           <Link to={`/user/doctor/update/${doctor.id}`}>
-                            <button className="btn btn-primary ">Update</button>
+                            <button className="btn btn-outline-warning ">
+                              Edit
+                            </button>
                           </Link>
-                        </ButtonGroup>
+                        </div>
                       </td>
                     </tr>
                   );

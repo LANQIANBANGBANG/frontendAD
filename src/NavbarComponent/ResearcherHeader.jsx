@@ -19,11 +19,12 @@ export const ResearcherHeader = () => {
     });
     navigate("/");
     sessionStorage.removeItem("active-researcher");
-    window.location.reload(true);
+    sessionStorage.removeItem("auth-token");
+    navigate(0);
   };
 
   return (
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+    <ul class="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <Link to="record/all" className="nav-link active" aria-current="page">
           <b className="text-color">DataSet Dashboard</b>

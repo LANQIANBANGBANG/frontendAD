@@ -1,23 +1,38 @@
 import { Link } from "react-router-dom";
 import logo from "../images/h_logo.png";
 import { RoleNav } from "./RoleNav";
+import { useState, useEffect } from "react";
 
 const Header = () => {
+  const doctor = JSON.parse(sessionStorage.getItem("active-doctor"));
+  const admin = JSON.parse(sessionStorage.getItem("active-admin"));
+  const researcher = JSON.parse(sessionStorage.getItem("active-researcher"));
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    if (doctor !== null) {
+      setGreeting("Welcome to Doctor Page");
+    } else if (admin !== null) {
+      setGreeting("Welcome to Admin Page");
+    } else if (researcher !== null) {
+      setGreeting("Welcome to Researcher Page");
+    } else {
+      setGreeting("Welcome!");
+    }
+  }, [doctor, admin, researcher]);
+
   return (
     <div>
       <nav className="navbar  navbar-expand-lg custom-bg text-color">
         <div className="container-fluid text-color">
-          <img
-            src={logo}
-            width="40"
-            height="40"
-            className="d-inline-block align-top"
-            alt=""
-          />
           <Link to="/" className="nacbar-brand">
-            <i>
-              <b className="text-color">Team Two Hospital</b>
-            </i>
+            <img
+              src={logo}
+              width="220"
+              height="40"
+              className="d-inline-block align-top"
+              alt=""
+            />
           </Link>
 
           <button
@@ -32,15 +47,16 @@ const Header = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav me-auto mt-3">
               <li className="nav-item">
-                <Link
+                {/* <Link
                   to="/about"
                   className="nav-link active"
                   aria-current="page"
                 >
                   <b className="text-color">Contact US</b>
-                </Link>
+                </Link> */}
+                <b>{greeting}</b>
               </li>
             </ul>
             <RoleNav />

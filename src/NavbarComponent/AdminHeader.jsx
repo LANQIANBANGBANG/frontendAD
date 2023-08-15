@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { UserLink } from "./UserLink";
 
 const AdminHeader = () => {
   let navigate = useNavigate();
@@ -19,11 +20,12 @@ const AdminHeader = () => {
     });
     navigate("/");
     sessionStorage.removeItem("active-admin");
-    window.location.reload();
+    sessionStorage.removeItem("auth-token");
+    navigate(0);
   };
 
   return (
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+    <ul class="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <Link
           to="user/doctor/all"
@@ -33,34 +35,8 @@ const AdminHeader = () => {
           <b className="text-color">View Doctors</b>
         </Link>
       </li>
-
-      <li className="nav-item">
-        <Link
-          to="/user/doctor/register"
-          className="nav-link active"
-          aria-current="page"
-        >
-          <b className="text-color">Register Doctor</b>
-        </Link>
-      </li>
-      <li className="nav-item">
-        <Link
-          to="user/researcher/all"
-          className="nav-link active"
-          aria-current="page"
-        >
-          <b className="text-color">View Researchers</b>
-        </Link>
-      </li>
-      <li className="nav-item">
-        <Link
-          to="/user/researcher/register"
-          className="nav-link active"
-          aria-current="page"
-        >
-          <b className="text-color">Register Researcher</b>
-        </Link>
-      </li>
+      <UserLink to="/user/nurse/all" label="View Nurses" />
+      <UserLink to="/user/researcher/all" label="View Researchers" />
 
       <li class="nav-item">
         <Link

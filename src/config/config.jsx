@@ -5,8 +5,7 @@ export const USER_API_URL = "https://adproj.azurewebsites.net/user";
 //FIND DOCTOR
 export const FINDDOCTOR_API_URL =
   "https://adproj.azurewebsites.net/user/findRole/DOCTOR";
-export const FINDRESEARCHER_API_URL =
-  "https://adproj.azurewebsites.net/user/findRole/RESEARCHER";
+export const FIND_API_URL = "https://adproj.azurewebsites.net/user/findRole";
 //REGISTER
 export const REGISTER_API_URL =
   "https://adproj.azurewebsites.net/auth/register";

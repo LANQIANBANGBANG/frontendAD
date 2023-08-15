@@ -17,13 +17,15 @@ export const DoctorHeader = () => {
       draggable: true,
       progress: undefined,
     });
-    navigate("/");
+
     sessionStorage.removeItem("active-doctor");
-    window.page.reload();
+    sessionStorage.removeItem("auth-token");
+    navigate("/");
+    navigate(0);
   };
 
   return (
-    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-5">
+    <ul class="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <Link to="record/all" className="nav-link active" aria-current="page">
           <b className="text-color">View Medical Record</b>
