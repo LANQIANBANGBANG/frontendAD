@@ -155,7 +155,7 @@ export const ViewAllMedicalRecord = () => {
               <i className="bi bi-plus"></i>
               Add New Medical Record
             </Link>
-            <button
+            {/* <button
               className={`btn ${
                 showIncompleteRecords ? "btn-success" : "btn-danger"
               }`}
@@ -165,7 +165,7 @@ export const ViewAllMedicalRecord = () => {
             >
               <i className="bi bi-plus"></i>
               {showIncompleteRecords ? "Show All" : "Incomplete Only"}
-            </button>
+            </button> */}
             <div className="ms-2">
               <input
                 type="text"
