@@ -42,7 +42,6 @@ export function App() {
         <Route path="/record/all" element={<ViewAllMedicalRecord />} />
         <Route path="/record/features/:recordId" element={<FeaturesForm />} />
         <Route path="/add-medical-record" element={<AddMedicalRecordPage />} />
-        <Route path="/report/all" element={<ViewAllReport />} />
         <Route
           path="/custom-features/:recordId"
           element={<CustomFeaturesPage />}

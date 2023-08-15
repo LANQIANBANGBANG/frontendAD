@@ -26,15 +26,13 @@ export const ResearcherHeader = () => {
   return (
     <ul class="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
-        <Link to="record/all" className="nav-link active" aria-current="page">
-          <b className="text-color">DataSet Dashboard</b>
-        </Link>
-      </li>
-
-      <li className="nav-item">
-        <Link to="/report/all" className="nav-link active" aria-current="page">
-          <b className="text-color">Released Reports</b>
-        </Link>
+        <a
+          href="http://13.250.206.7:3000"
+          className="nav-link active"
+          aria-current="page"
+        >
+          <b className="text-color">Researcher Dashboard</b>
+        </a>
       </li>
 
       <li class="nav-item">
