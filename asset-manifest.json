@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/frontendAD/static/css/main.00bbd450.css",
-    "main.js": "/frontendAD/static/js/main.ebfc3b11.js",
+    "main.css": "/frontendAD/static/css/main.d3a6c917.css",
+    "main.js": "/frontendAD/static/js/main.de31a243.js",
     "static/media/hospital_slider2.png": "/frontendAD/static/media/hospital_slider2.406a7ff89a9086a9406f.png",
     "static/media/hospital_slider3.png": "/frontendAD/static/media/hospital_slider3.f1ada2fa9e651be5a8d6.png",
     "static/media/hospital_slider.png": "/frontendAD/static/media/hospital_slider.a7cc508b257a865774bd.png",
     "static/media/h_logo.png": "/frontendAD/static/media/h_logo.0cc84c7760871d389e7f.png",
     "index.html": "/frontendAD/index.html",
-    "main.00bbd450.css.map": "/frontendAD/static/css/main.00bbd450.css.map",
-    "main.ebfc3b11.js.map": "/frontendAD/static/js/main.ebfc3b11.js.map"
+    "main.d3a6c917.css.map": "/frontendAD/static/css/main.d3a6c917.css.map",
+    "main.de31a243.js.map": "/frontendAD/static/js/main.de31a243.js.map"
   },
   "entrypoints": [
-    "static/css/main.00bbd450.css",
-    "static/js/main.ebfc3b11.js"
+    "static/css/main.d3a6c917.css",
+    "static/js/main.de31a243.js"
   ]
 }
