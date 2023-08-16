@@ -120,47 +120,84 @@ export const CustomFeaturesPage = () => {
       console.error("Error updating record: ", error);
     }
   };
-  //console.log("filteredCustomFeatures,", filteredCustomFeatures);
+
   return (
-    <div>
-      <h2>Custom Features List</h2>
-      <form className="form">
-        {filteredCustomFeatures.length != 0 ? (
+    <div
+      className="card mt-3 d-flex align-items-center justify-content-center m-auto pb-5 pt-5"
+      style={{ width: "50rem" }}
+    >
+      <h2 className="mb-2">Custom Features List</h2>
+      <form className="form" style={{ width: 350 }}>
+        {filteredCustomFeatures.length !== 0 ? (
           <ul className="list-group">
             {filteredCustomFeatures.map((feature) => (
-              <li key={feature.name} className="list-group-item">
-                <b>{feature.name}</b>:
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={feature.value}
-                    onChange={(e) => {
-                      setCustomFeatures((prevFeatures) => ({
-                        ...prevFeatures,
-                        [feature.name]: e.target.value,
-                      }));
-                    }}
-                  />
-                ) : (
-                  feature.value
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleDeleteFeature(feature.name)}
-                >
-                  Delete
-                </button>
+              <li key={feature.name} className="list-group-item form-control">
+                <div className="d-flex justify-content-between align-items-center">
+                  {/* <div className="feature-item">
+                    <b>{feature.name}</b>:{" "}
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={feature.value}
+                        onChange={(e) => {
+                          setCustomFeatures((prevFeatures) => ({
+                            ...prevFeatures,
+                            [feature.name]: e.target.value,
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                    ) : (
+                      <span className="feature-value">{feature.value}</span>
+                    )}
+                  </div> */}
+                  <form>
+                    <div className="form-group feature-item d-flex flex-row justify-content-between">
+                      <div>
+                        <label>
+                          <b>{feature.name}</b>
+                        </label>
+                      </div>
+                      <div>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            value={feature.value}
+                            onChange={(e) => {
+                              setCustomFeatures((prevFeatures) => ({
+                                ...prevFeatures,
+                                [feature.name]: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          />
+                        ) : (
+                          <span className="feature-value">{feature.value}</span>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => handleDeleteFeature(feature.name)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          <div class="alert alert-warning" role="alert">
-            <span style={{ display: "block", margin: "auto" }}>
-              Oops! Doctor do not add custom features for this record!
+          <div className="alert alert-warning" role="alert">
+            <span style={{ textAlign: "center" }}>
+              Oops! The doctor did not add custom features for this record.
             </span>
           </div>
         )}
       </form>
+
       <div>
         <button
           type="btn btn-primary"
@@ -199,9 +236,11 @@ export const CustomFeaturesPage = () => {
         )}
       </div>
       <form className="form-group">
-        <div className="border p-3" style={{ width: 250 }}>
+        <div className="border p-3" style={{ width: 350 }}>
           <div className="form-group">
-            <label>Feature Name</label>
+            <label>
+              <b>Feature Name</b>
+            </label>
             <input
               className="form-control"
               type="text"
@@ -214,7 +253,9 @@ export const CustomFeaturesPage = () => {
           </div>
 
           <div className="form-group">
-            <label>Feature Value</label>
+            <label>
+              <b>Feature Value</b>
+            </label>
             <input
               className="form-control"
               type="text"

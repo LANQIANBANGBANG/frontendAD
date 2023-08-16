@@ -27,7 +27,7 @@ export const ResearcherHeader = () => {
     <ul class="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <a
-          href="http://13.250.206.7:3000"
+          href="http://13.250.206.7:3000/home"
           className="nav-link active"
           aria-current="page"
         >

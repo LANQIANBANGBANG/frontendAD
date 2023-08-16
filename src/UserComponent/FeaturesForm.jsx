@@ -12,6 +12,8 @@ export const FeaturesForm = () => {
   const { newRecord } = useNewRecord();
   const { recordId } = useParams();
   const [patientName, setPatientName] = useState("");
+  const [patientId, setPatientId] = useState("");
+  const [healthy, setHealthy] = useState("");
 
   const token = sessionStorage.getItem("auth-token");
 
@@ -72,7 +74,7 @@ export const FeaturesForm = () => {
       console.error("Error updating record:", error);
     }
   };
-  console.log("patient name", JSON.stringify(patientName));
+  //console.log("patient name", JSON.stringify(patientName));
 
   useEffect(() => {
     const fetchFeaturesData = async () => {
@@ -89,6 +91,8 @@ export const FeaturesForm = () => {
         if (response.ok) {
           const responseData = await response.json();
           setPatientName(responseData.data.medicalRecord.name);
+          setPatientId(responseData.data.medicalRecord.patientId);
+
           const featureData = responseData.data.medicalRecord.recordFeatures;
           //console.log("featureData: ", featureData);
           if (featureData === null) {
@@ -117,10 +121,13 @@ export const FeaturesForm = () => {
             <h2 className="text-center mb-2">Medical Report</h2>
             <div className="d-flex justify-content-center">
               <p className="me-4">
-                <b>Record</b> <i>{recordId}</i>
+                <b>Record</b> <i className="text-secondary">{recordId}</i>
+              </p>
+              <p className="me-4">
+                <b>Patient</b> <i className="text-secondary">{patientName}</i>
               </p>
               <p>
-                <b>Patient</b> <i>{patientName}</i>
+                <b>Patient Id</b> <i className="text-secondary">{patientId}</i>
               </p>
             </div>
           </div>
@@ -148,7 +155,7 @@ export const FeaturesForm = () => {
                 className="btn btn-warning mt-2"
                 onClick={handleEditFeatureClick}
               >
-                Edit Features
+                Edit Report
               </button>
             )}
           </div>
@@ -197,13 +204,6 @@ export const FeaturesForm = () => {
                 </td>
               </tr>
             ))}
-            {/* <Link
-              to={`/custom-features/${recordId}?features=${JSON.stringify(
-                features
-              )}`}
-            >
-              <button className="btn btn-primary">Show Custom Features</button>
-            </Link> */}
             <Link
               to={`/custom-features/${recordId}?features=${encodedFeatures}`}
             >

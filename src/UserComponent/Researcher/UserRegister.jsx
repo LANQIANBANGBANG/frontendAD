@@ -62,6 +62,18 @@ export const UserRegister = () => {
           password: "",
           role: userType,
         });
+        setConfirmPassword("");
+      } else {
+        const errorMessage = "This email already exists. Please try again.";
+        toast.error(errorMessage, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     } catch (error) {
       toast.error(`${userType} Registered Failed. Please try again`, {
@@ -73,7 +85,6 @@ export const UserRegister = () => {
         draggable: true,
         progress: undefined,
       });
-      console.log(error.message);
     }
   };
 

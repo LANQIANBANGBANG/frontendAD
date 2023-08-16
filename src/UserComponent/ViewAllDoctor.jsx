@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import React from "react";
-import { ButtonGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FINDDOCTOR_API_URL, USER_API_URL } from "../config/config";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
 import { SPECIALISTS } from "../utils/Constant";
+import { DeleteConfirmation } from "../utils/DeleteCofirmationCheck";
 
 const ViewAllDoctor = () => {
   const [allDoctor, setAllDoctor] = useState([]);
   const [originalDoctorList, setOriginalDoctorList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentDoctors = allDoctor.slice(indexOfFirstItem, indexOfLastItem);
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -46,9 +47,20 @@ const ViewAllDoctor = () => {
     const response = await axios.get(`${FINDDOCTOR_API_URL}`);
     return response.data.data.roleList;
   };
+  const [doctorToDelete, setDoctorToDelete] = useState(null);
 
-  const deleteDoctor = (doctorId) => {
-    fetch(`${USER_API_URL}/${doctorId}`, {
+  const handleDeleteButtonClick = (id) => {
+    setDoctorToDelete(id);
+    setShowConfirmation(true);
+  };
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+  };
+
+  const deleteDoctor = async (doctorId) => {
+    setShowConfirmation(false);
+    setDoctorToDelete(null);
+    await fetch(`${USER_API_URL}/${doctorId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -82,6 +94,11 @@ const ViewAllDoctor = () => {
         <div className="card-header custom-bg-text text-center bg-color">
           <h2>Doctor List</h2>
         </div>
+        <DeleteConfirmation
+          show={showConfirmation}
+          onClose={handleCloseConfirmation}
+          onConfirm={() => deleteDoctor(doctorToDelete)}
+        />
         <div className="d-flex flex-column ms-5">
           <div className="d-flex align-items-center mt-1">
             <div className="d-flex me-5">
@@ -168,7 +185,7 @@ const ViewAllDoctor = () => {
                         <div>
                           <button
                             className="btn btn-outline-danger me-1"
-                            onClick={() => deleteDoctor(doctor.id)}
+                            onClick={() => handleDeleteButtonClick(doctor.id)}
                           >
                             Delete
                           </button>
@@ -186,13 +203,13 @@ const ViewAllDoctor = () => {
             </table>
           </div>
         </div>
+        <Pagination
+          totalItems={allDoctor.length}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+        />
       </div>
-      <Pagination
-        totalItems={allDoctor.length}
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        onPageChange={handlePageChange}
-      />
     </div>
   );
 };

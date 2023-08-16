@@ -4,9 +4,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FIND_API_URL, USER_API_URL } from "../../config/config";
+import { DeleteConfirmation } from "../../utils/DeleteCofirmationCheck";
+import { Pagination } from "../Pagination";
 
 export const ViewAllUser = ({ userType }) => {
   const [allUser, setAllUser] = useState([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = allUser.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     const getAllUser = async () => {
@@ -23,10 +37,21 @@ export const ViewAllUser = ({ userType }) => {
 
     getAllUser();
   }, [userType]);
-  console.log("All Users: ", allUser);
+  //console.log("All Users: ", allUser);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  const deleteUser = (userId) => {
-    fetch(`${USER_API_URL}/${userId}`, {
+  const handleDeleteButtonClick = (id) => {
+    setUserToDelete(id);
+    setShowConfirmation(true);
+  };
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+  };
+
+  const deleteUser = async (userId) => {
+    setShowConfirmation(false);
+    setUserToDelete(null);
+    await fetch(`${USER_API_URL}/${userId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -52,7 +77,7 @@ export const ViewAllUser = ({ userType }) => {
   return (
     <div className="mt-3">
       <div
-        className="card form-card ms-2 me-2 mb-5 custom-bg border-color "
+        className="card form-card ms-2 me-2 mb-5 custom-bg border-color"
         style={{
           height: "45rem",
         }}
@@ -64,23 +89,25 @@ export const ViewAllUser = ({ userType }) => {
             List
           </h2>
         </div>
-        <Link
-          to={`/user/${userType}/register`}
-          className="nav-link active ms-5 mt-2"
-          aria-current="page"
-        >
-          <button className="btn btn-warning">
-            Register{" "}
-            {userType.substring(0, 1).toUpperCase() +
-              userType.toLowerCase().substring(1)}
-          </button>
-        </Link>
-        <div
-          className="card-body"
-          style={{
-            overflowY: "auto",
-          }}
-        >
+        <DeleteConfirmation
+          show={showConfirmation}
+          onClose={handleCloseConfirmation}
+          onConfirm={() => deleteUser(userToDelete)}
+        />
+        <div className="d-flex justify-content-start align-items-center">
+          <Link
+            to={`/user/${userType}/register`}
+            className="btn btn-warning ms-5 mt-2"
+            aria-current="page"
+          >
+            <button className="btn btn-warning btn-sm">
+              Register{" "}
+              {userType.substring(0, 1).toUpperCase() +
+                userType.toLowerCase().substring(1)}
+            </button>
+          </Link>
+        </div>
+        <div className="card-body" style={{ overflowY: "auto" }}>
           <div className="table-responsive">
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
@@ -92,34 +119,38 @@ export const ViewAllUser = ({ userType }) => {
                 </tr>
               </thead>
               <tbody>
-                {allUser.map((user) => {
-                  return (
-                    <tr>
-                      <td>{user.firstName}</td>
-                      <td>{user.lastName}</td>
-                      <td>{user.emailId}</td>
-                      <td>
-                        <div>
-                          <button
-                            className="btn btn-outline-danger me-1"
-                            onClick={() => deleteUser(user.id)}
-                          >
-                            Delete
+                {currentUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.emailId}</td>
+                    <td>
+                      <div>
+                        <button
+                          className="btn btn-outline-danger me-1"
+                          onClick={() => handleDeleteButtonClick(user.id)}
+                        >
+                          Delete
+                        </button>
+                        <Link to={`/user/${userType}/update/${user.id}`}>
+                          <button className="btn btn-outline-warning">
+                            Edit
                           </button>
-                          <Link to={`/user/${userType}/update/${user.id}`}>
-                            <button className="btn btn-outline-warning ">
-                              Update
-                            </button>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
+        <Pagination
+          totalItems={allUser.length}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

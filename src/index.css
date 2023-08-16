@@ -119,3 +119,7 @@ main {
   margin-bottom: 5px;
   font-weight: bold;
 }
+
+.feature-value {
+  margin-left: 8px;
+}

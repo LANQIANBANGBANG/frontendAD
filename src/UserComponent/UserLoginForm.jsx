@@ -14,11 +14,21 @@ const UserLoginForm = () => {
     role: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [showCredentials, setShowCredentials] = useState(false);
 
   const handleUserInput = (e) => {
-    setLoginRequest({ ...loginRequest, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setLoginRequest({ ...loginRequest, [name]: value });
   };
-  console.log("log in request: ", loginRequest);
+  const handleRoleChange = (e) => {
+    const selectedRole = e.target.value;
+    setLoginRequest((prevRequest) => ({
+      ...prevRequest,
+      role: selectedRole,
+    }));
+    setShowCredentials(selectedRole !== "0");
+  };
+  //console.log("log in request: ", loginRequest);
 
   const loginAction = async (e) => {
     e.preventDefault();
@@ -91,9 +101,13 @@ const UserLoginForm = () => {
                   <b>User Role</b>
                 </label>
                 <select
-                  onChange={handleUserInput}
+                  onChange={(e) => {
+                    handleUserInput(e);
+                    handleRoleChange(e);
+                  }}
                   className="form-control"
                   name="role"
+                  required
                 >
                   <option value="0">Select Role</option>
                   <option value="admin"> Admin </option>
@@ -101,33 +115,37 @@ const UserLoginForm = () => {
                   <option value="doctor"> Doctor </option>
                 </select>
               </div>
-              <div className="mb-3 text-color">
-                <label for="emailId" class="form-label">
-                  <b>Email Id</b>
-                </label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="emailId"
-                  name="emailId"
-                  onChange={handleUserInput}
-                  value={loginRequest.emailId}
-                />
-              </div>
-              <div className="mb-3 text-color">
-                <label for="password" className="form-label">
-                  <b>Password</b>
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  onChange={handleUserInput}
-                  value={loginRequest.password}
-                  autoComplete="on"
-                />
-              </div>
+              {showCredentials && (
+                <>
+                  <div className="mb-3 text-color">
+                    <label for="emailId" class="form-label">
+                      <b>Email Id</b>
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="emailId"
+                      name="emailId"
+                      onChange={handleUserInput}
+                      value={loginRequest.emailId}
+                    />
+                  </div>
+                  <div className="mb-3 text-color">
+                    <label for="password" className="form-label">
+                      <b>Password</b>
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      name="password"
+                      onChange={handleUserInput}
+                      value={loginRequest.password}
+                    />
+                  </div>
+                </>
+              )}
+
               <button
                 type="submit"
                 className="btn bg-color custom-bg-text"

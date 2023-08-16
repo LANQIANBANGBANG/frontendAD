@@ -8,7 +8,6 @@ import { RECORD_API_URL } from "../config/config";
 import { CustomFeatureForm } from "./CustomFeatureForm";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { GeneratePatientId } from "../utils/GeneratePatientId";
 import CryptoJS from "crypto-js";
 
 export const AddMedicalRecordPage = () => {
@@ -20,12 +19,12 @@ export const AddMedicalRecordPage = () => {
   const [showAddCustomFeaturesButton, setShowAddCustomFeautresButton] =
     useState(true);
   const token = sessionStorage.getItem("auth-token");
-  //console.log("token: ", token);
 
   const handlePatientNameChange = (e) => {
+    const lowercaseName = e.target.value.toLowerCase();
     setNewRecord((prev) => ({
       ...prev,
-      name: e.target.value,
+      name: lowercaseName,
     }));
   };
 
@@ -46,7 +45,6 @@ export const AddMedicalRecordPage = () => {
         feature.name === name ? { ...feature, value } : feature
       ),
     }));
-    //console.log(newRecord);
   };
   const handleAddCustomFeatures = () => {
     setShowCustomFeatureForm(true);

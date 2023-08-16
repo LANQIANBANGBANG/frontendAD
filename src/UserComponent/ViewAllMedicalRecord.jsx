@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
 import { RECORD_API_URL } from "../config/config";
 import { GeneratePatientId } from "../utils/GeneratePatientId";
+import { DeleteConfirmation } from "../utils/DeleteCofirmationCheck";
 
 export const ViewAllMedicalRecord = () => {
   const [allMedicalRecord, setAllMedicalRecord] = useState([]);
@@ -20,8 +21,11 @@ export const ViewAllMedicalRecord = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchIdQuery, setSearchIdQuery] = useState("");
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -48,34 +52,6 @@ export const ViewAllMedicalRecord = () => {
     getAllMedicalRecord();
   }, []);
 
-  const handleInCompleteFilter = () => {
-    setShowIncompleteRecords(true);
-  };
-  const handleSetBack = () => {
-    setShowIncompleteRecords(false);
-  };
-
-  // const handleIncompleteFilter = () => {
-  //   setShowIncompleteRecords(!showIncompleteRecords);
-
-  //   const filteredRecords = allMedicalRecord.filter((record) => {
-  //     const isComplete =
-  //       record.recordFeatures != null &&
-  //       Object.keys(record.recordFeatures)
-  //         .slice(0, 7)
-  //         .every(
-  //           (key) =>
-  //             record.recordFeatures[key] !== "" &&
-  //             record.recordFeatures[key] !== null
-  //         );
-
-  //     return showIncompleteRecords ? !isComplete : true;
-  //   });
-  //   console.log("filtered", filteredRecords);
-
-  //   setAllMedicalRecord(filteredRecords);
-  // };
-
   const retrieveAllMedicalRecord = async () => {
     try {
       const response = await fetch(`${RECORD_API_URL}`, {
@@ -96,8 +72,19 @@ export const ViewAllMedicalRecord = () => {
       throw error;
     }
   };
+  const [recordToDelete, setRecordToDelete] = useState(null);
+
+  const handleDeleteButtonClick = (id) => {
+    setRecordToDelete(id);
+    setShowConfirmation(true);
+  };
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+  };
 
   const handleDeleteAction = async (recordId) => {
+    setShowConfirmation(false);
+    setRecordToDelete(null);
     try {
       const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
         method: "DELETE",
@@ -126,7 +113,17 @@ export const ViewAllMedicalRecord = () => {
   };
 
   const filteredRecords = sortedRecords.filter((record) => {
-    return record.name.includes(searchQuery);
+    const nameMatch = record.name.includes(searchQuery);
+    const idMatch = record.patientId.includes(searchIdQuery);
+
+    if (searchQuery && searchIdQuery) {
+      return nameMatch && idMatch;
+    } else if (searchQuery) {
+      return nameMatch;
+    } else if (searchIdQuery) {
+      return idMatch;
+    }
+    return true;
   });
   const currentRecords = filteredRecords.slice(
     indexOfFirstItem,
@@ -144,6 +141,11 @@ export const ViewAllMedicalRecord = () => {
         <div className="card-header custom-bg-text text-center bg-color">
           <h2>Medical Record List</h2>
         </div>
+        <DeleteConfirmation
+          show={showConfirmation}
+          onClose={handleCloseConfirmation}
+          onConfirm={() => handleDeleteAction(recordToDelete)}
+        />
         <div
           className="card-body min-vh-100"
           style={{
@@ -155,17 +157,6 @@ export const ViewAllMedicalRecord = () => {
               <i className="bi bi-plus"></i>
               Add New Medical Record
             </Link>
-            {/* <button
-              className={`btn ${
-                showIncompleteRecords ? "btn-success" : "btn-danger"
-              }`}
-              onClick={
-                showIncompleteRecords ? handleSetBack : handleInCompleteFilter
-              }
-            >
-              <i className="bi bi-plus"></i>
-              {showIncompleteRecords ? "Show All" : "Incomplete Only"}
-            </button> */}
             <div className="ms-2">
               <input
                 type="text"
@@ -173,6 +164,15 @@ export const ViewAllMedicalRecord = () => {
                 placeholder="Search patient name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="ms-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search patient Id..."
+                value={searchIdQuery}
+                onChange={(e) => setSearchIdQuery(e.target.value)}
               />
             </div>
           </div>
@@ -245,10 +245,10 @@ export const ViewAllMedicalRecord = () => {
                         </td>
                         <td>
                           <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              handleDeleteAction(medicalRecord.id);
-                            }}
+                            className="btn btn-outline-danger"
+                            onClick={() =>
+                              handleDeleteButtonClick(medicalRecord.id)
+                            }
                           >
                             Delete
                           </button>
