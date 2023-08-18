@@ -11,13 +11,13 @@ const Header = () => {
 
   useEffect(() => {
     if (doctor !== null) {
-      setGreeting("Welcome to Doctor Page");
+      setGreeting("Welcome to Doctor Page !");
     } else if (admin !== null) {
-      setGreeting("Welcome to Admin Page");
+      setGreeting("Welcome to Admin Page !");
     } else if (researcher !== null) {
-      setGreeting("Welcome to Researcher Page");
+      setGreeting("Welcome to Researcher Page !");
     } else {
-      setGreeting("Welcome!");
+      setGreeting("Welcome !");
     }
   }, [doctor, admin, researcher]);
 
@@ -28,12 +28,12 @@ const Header = () => {
           <Link to="/" className="nacbar-brand">
             <img
               src={logo}
-              width="220"
-              height="40"
+              height="45"
               className="d-inline-block align-top"
               alt=""
             />
           </Link>
+          
 
           <button
             className="navbar-toggler"
@@ -56,7 +56,7 @@ const Header = () => {
                 >
                   <b className="text-color">Contact US</b>
                 </Link> */}
-                <b>{greeting}</b>
+                <p className="text-greet">{greeting}</p>
               </li>
             </ul>
             <RoleNav />

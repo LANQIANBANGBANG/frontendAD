@@ -46,7 +46,6 @@ const UserLoginForm = () => {
       const res = await response.json();
       const token = res.access_token;
       const selectedRole = loginRequest.role.toLowerCase();
-
       sessionStorage.setItem("auth-token", token);
       if (selectedRole === "admin") {
         sessionStorage.setItem("active-admin", JSON.stringify(res));

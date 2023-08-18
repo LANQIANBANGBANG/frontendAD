@@ -25,7 +25,7 @@ const AdminHeader = () => {
   };
 
   return (
-    <ul class="navbar-nav ms-auto mt-3 me-5">
+    <ul className="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <Link
           to="user/doctor/all"
@@ -38,7 +38,7 @@ const AdminHeader = () => {
       <UserLink to="/user/nurse/all" label="View Nurses" />
       <UserLink to="/user/researcher/all" label="View Researchers" />
 
-      <li class="nav-item">
+      <li className="nav-item">
         <Link
           to=""
           class="nav-link active"

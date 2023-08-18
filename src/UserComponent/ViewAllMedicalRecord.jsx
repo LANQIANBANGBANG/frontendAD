@@ -113,7 +113,7 @@ export const ViewAllMedicalRecord = () => {
   };
 
   const filteredRecords = sortedRecords.filter((record) => {
-    const nameMatch = record.name.includes(searchQuery);
+    const nameMatch = record.name.toLowerCase().includes(searchQuery.toLowerCase());
     const idMatch = record.patientId.includes(searchIdQuery);
 
     if (searchQuery && searchIdQuery) {
@@ -244,6 +244,9 @@ export const ViewAllMedicalRecord = () => {
                           </Link>
                         </td>
                         <td>
+                          <button className="btn btn-outline-primary me-2">
+                            Send
+                          </button>
                           <button
                             className="btn btn-outline-danger"
                             onClick={() =>

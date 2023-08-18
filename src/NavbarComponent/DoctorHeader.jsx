@@ -25,14 +25,14 @@ export const DoctorHeader = () => {
   };
 
   return (
-    <ul class="navbar-nav ms-auto mt-3 me-5">
+    <ul className="navbar-nav ms-auto mt-3 me-5">
       <li className="nav-item">
         <Link to="record/all" className="nav-link active" aria-current="page">
           <b className="text-color">View Medical Record</b>
         </Link>
       </li>
 
-      <li class="nav-item">
+      <li className="nav-item">
         <Link
           to=""
           class="nav-link active"

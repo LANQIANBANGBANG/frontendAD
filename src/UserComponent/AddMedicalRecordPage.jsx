@@ -21,10 +21,10 @@ export const AddMedicalRecordPage = () => {
   const token = sessionStorage.getItem("auth-token");
 
   const handlePatientNameChange = (e) => {
-    const lowercaseName = e.target.value.toLowerCase();
+    // const lowercaseName = e.target.value.toLowerCase();
     setNewRecord((prev) => ({
       ...prev,
-      name: lowercaseName,
+      name: e.target.value,
     }));
   };
 
