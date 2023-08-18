@@ -1,17 +1,17 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
 import { RECORD_API_URL, SEND_RESEARCH_URL } from "../config/config";
-import { GeneratePatientId } from "../utils/GeneratePatientId";
+//import { GeneratePatientId } from "../utils/GeneratePatientId";
 import { DeleteConfirmation } from "../utils/DeleteCofirmationCheck";
 
 export const ViewAllMedicalRecord = () => {
   const [allMedicalRecord, setAllMedicalRecord] = useState([]);
-  const [originalRecordList, setOriginalDoctorList] = useState([]);
+  //const [originalRecordList, setOriginalDoctorList] = useState([]);
 
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [featuresOfRecord, setFeaturesOfRecord] = useState({}); //this is to get the features of a specific record
@@ -93,7 +93,7 @@ export const ViewAllMedicalRecord = () => {
           ]);
 
           setAllMedicalRecord(recordsWithPatientId);
-          setOriginalDoctorList(recordsWithPatientId);
+          //setOriginalDoctorList(recordsWithPatientId);
           setIsLoading(false);
         }
       } catch (error) {
@@ -380,7 +380,13 @@ export const ViewAllMedicalRecord = () => {
     <>
       {isLoading ? (
         <div className="loading-indicator">
-          <p>Please be patient, we are fetching data...</p>
+          <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+            <div className="spinner-border text-secondary" role="status">
+              <span className="sr-only"></span>
+            </div>
+            <span className="mt-2">We have a lot of data to fetch...</span>
+            <span>Please be patient...</span>
+          </div>
         </div>
       ) : (
         <div className="mt-3">
