@@ -72,7 +72,9 @@ export const CustomFeaturesPage = () => {
   );
   const filteredCustomFeatures = customFeatures
     ? Object.keys(customFeatures)
-        .filter((name) => !newRecordFeatureNames.includes(name))
+        .filter(
+          (name) => !newRecordFeatureNames.includes(name) && name !== "sent"
+        )
         .map((name) => ({ name, value: customFeatures[name] }))
     : [];
 
@@ -93,7 +95,7 @@ export const CustomFeaturesPage = () => {
       const updatedRecord = {
         recordFeatures: updatedFeatures,
       };
-      console.log("updateRecord: ", updatedRecord);
+      //console.log("updateRecord: ", updatedRecord);
 
       const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
         method: "PUT",
@@ -130,64 +132,54 @@ export const CustomFeaturesPage = () => {
       <form className="form" style={{ width: 350 }}>
         {filteredCustomFeatures.length !== 0 ? (
           <ul className="list-group">
-            {filteredCustomFeatures.map((feature) => (
-              <li key={feature.name} className="list-group-item form-control">
-                <div className="d-flex justify-content-between align-items-center">
-                  {/* <div className="feature-item">
-                    <b>{feature.name}</b>:{" "}
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={feature.value}
-                        onChange={(e) => {
-                          setCustomFeatures((prevFeatures) => ({
-                            ...prevFeatures,
-                            [feature.name]: e.target.value,
-                          }));
-                        }}
-                        className="form-control"
-                      />
-                    ) : (
-                      <span className="feature-value">{feature.value}</span>
-                    )}
-                  </div> */}
-                  <form>
-                    <div className="form-group feature-item d-flex flex-row justify-content-between">
-                      <div>
-                        <label>
-                          <b>{feature.name}</b>
-                        </label>
-                      </div>
-                      <div>
-                        {isEditing ? (
-                          <input
-                            type="text"
-                            value={feature.value}
-                            onChange={(e) => {
-                              setCustomFeatures((prevFeatures) => ({
-                                ...prevFeatures,
-                                [feature.name]: e.target.value,
-                              }));
-                            }}
-                            className="form-control"
-                          />
-                        ) : (
-                          <span className="feature-value">{feature.value}</span>
-                        )}
-                      </div>
-                    </div>
-                  </form>
-
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => handleDeleteFeature(feature.name)}
+            {filteredCustomFeatures.map(
+              (feature) =>
+                feature.name !== "sent" && (
+                  <li
+                    key={feature.name}
+                    className="list-group-item form-control"
                   >
-                    Delete
-                  </button>
-                </div>
-              </li>
-            ))}
+                    <div className="d-flex justify-content-between align-items-center">
+                      <form>
+                        <div className="form-group feature-item d-flex flex-row justify-content-between">
+                          <div>
+                            <label>
+                              <b>{feature.name}</b>
+                            </label>
+                          </div>
+                          <div>
+                            {isEditing ? (
+                              <input
+                                type="text"
+                                value={feature.value}
+                                onChange={(e) => {
+                                  setCustomFeatures((prevFeatures) => ({
+                                    ...prevFeatures,
+                                    [feature.name]: e.target.value,
+                                  }));
+                                }}
+                                className="form-control"
+                              />
+                            ) : (
+                              <span className="feature-value">
+                                {feature.value}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </form>
+
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => handleDeleteFeature(feature.name)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                )
+            )}
           </ul>
         ) : (
           <div className="alert alert-warning" role="alert">

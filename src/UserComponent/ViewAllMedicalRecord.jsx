@@ -5,13 +5,16 @@ import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
-import { RECORD_API_URL } from "../config/config";
+import { RECORD_API_URL, SEND_RESEARCH_URL } from "../config/config";
 import { GeneratePatientId } from "../utils/GeneratePatientId";
 import { DeleteConfirmation } from "../utils/DeleteCofirmationCheck";
 
 export const ViewAllMedicalRecord = () => {
   const [allMedicalRecord, setAllMedicalRecord] = useState([]);
   const [originalRecordList, setOriginalDoctorList] = useState([]);
+
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [featuresOfRecord, setFeaturesOfRecord] = useState({}); //this is to get the features of a specific record
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -25,13 +28,15 @@ export const ViewAllMedicalRecord = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchIdQuery, setSearchIdQuery] = useState("");
+  const [healthy, setHealthy] = useState(null);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
   const token = sessionStorage.getItem("auth-token");
-  console.log("token: ", token);
+  //console.log("token: ", token);
   const [showIncompleteRecords, setShowIncompleteRecords] = useState(false);
+  const [sentStatusDictionary, setSentStatusDictionary] = useState({});
 
   useEffect(() => {
     const getAllMedicalRecord = async () => {
@@ -41,6 +46,7 @@ export const ViewAllMedicalRecord = () => {
           const recordsWithPatientId = allMedicalRecordData.map((record) => {
             return record;
           });
+          fetchSentStatusForRecords(recordsWithPatientId);
           setAllMedicalRecord(recordsWithPatientId);
           setOriginalDoctorList(recordsWithPatientId);
         }
@@ -48,9 +54,34 @@ export const ViewAllMedicalRecord = () => {
         console.error("Error retrieving medical records:", error);
       }
     };
+    const fetchSentStatusForRecords = async (records) => {
+      const updatedSentStatusDictionary = {};
+      for (const medicalRecord of records) {
+        try {
+          const sendExists = await CheckIfSentExists(medicalRecord.id);
+          updatedSentStatusDictionary[medicalRecord.id] = sendExists;
+          console.log(
+            `Sent status for record ${medicalRecord.id}: ${sendExists}`
+          );
+        } catch (error) {
+          console.error("Error checking if sent exists: ", error);
+        }
+      }
+      console.log(
+        "Updated sent status dictionary: ",
+        updatedSentStatusDictionary
+      );
+      setSentStatusDictionary(updatedSentStatusDictionary);
+    };
 
     getAllMedicalRecord();
+    fetchSentStatusForRecords(allMedicalRecord);
   }, []);
+  //console.log("check the dictionary list: ", sentStatusDictionary);
+
+  useEffect(() => {
+    console.log("Updated sentStatusDictionary: ", sentStatusDictionary);
+  }, [sentStatusDictionary]);
 
   const retrieveAllMedicalRecord = async () => {
     try {
@@ -112,8 +143,39 @@ export const ViewAllMedicalRecord = () => {
     }
   };
 
+  const fetchRecordHealthyData = async (recordId) => {
+    try {
+      const response = await fetch(
+        `https://adproj.azurewebsites.net/researcher/${recordId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const responseData = await response.json();
+        //console.log(responseData.data.result);
+        let result = responseData.data.result;
+        if (result === "0") {
+          setHealthy(true);
+        } else if (result === "1") {
+          setHealthy(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching researcher data: ", error);
+    }
+  };
+
   const filteredRecords = sortedRecords.filter((record) => {
-    const nameMatch = record.name.includes(searchQuery);
+    const nameMatch = record.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const idMatch = record.patientId.includes(searchIdQuery);
 
     if (searchQuery && searchIdQuery) {
@@ -129,6 +191,169 @@ export const ViewAllMedicalRecord = () => {
     indexOfFirstItem,
     indexOfLastItem
   );
+
+  const fetchAllFeaturesOfRecord = async (recordId) => {
+    try {
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const responseData = await response.json();
+        const existingFeatures = responseData.data.medicalRecord.recordFeatures;
+        //console.log("existingfeatureRecord: ", existingFeatures);
+        // const updatedFeatures = {
+        //   ...existingFeatures,
+        //   sent: "true",
+        // };
+
+        setFeaturesOfRecord(existingFeatures);
+        return existingFeatures;
+        //
+        //console.log("features of record, ", featuresOfRecord);
+        //debugger;
+
+        //console.log("newfeatureRecord: ", featuresOfRecord);
+        //add a feature called "sent":true
+      }
+    } catch (error) {
+      console.error("Error fetching features: ", error);
+    }
+  };
+  console.log("token: ", token);
+
+  const updateSentToBackEnd = async (recordId, updatedFeatures) => {
+    try {
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recordFeatures: updatedFeatures }),
+      });
+      if (response.ok) {
+        console.log("updated record successfully!");
+      }
+    } catch (error) {
+      console.error("Error fetching features: ", error);
+    }
+  };
+
+  const [selectedRecords, setSelectedRecords] = useState({}); //store all the records which will be sent to the researcher
+
+  const handleSelectRecords = () => {
+    setIsSelectMode(true);
+  };
+
+  //console.log("existingfeatures: ", featuresOfRecord);
+  const processRecord = async (recordId) => {
+    try {
+      const existingFeatures = await fetchAllFeaturesOfRecord(recordId);
+      const updatedFeatures = { ...existingFeatures, sent: true };
+      await updateSentToBackEnd(recordId, updatedFeatures);
+
+      // ... other processing steps ...
+    } catch (error) {
+      console.error(`Error processing record ${recordId}:`, error);
+    }
+  };
+  //this function will send record to researcher and waiting for result
+  const sendToResearcher = async (recordId) => {
+    try {
+      const response = await fetch(`${SEND_RESEARCH_URL}/${recordId}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        toast.success(`Record ${recordId} Sent Successfully!!!`, {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleConfirmSend = async () => {
+    const selectedRecordIds = Object.keys(selectedRecords).filter(
+      (recordId) => selectedRecords[recordId] === true
+    );
+
+    try {
+      for (const recordId of selectedRecordIds) {
+        // await fetchAllFeaturesOfRecord(recordId);
+        // const existingFeatures = featuresOfRecord;
+        //console.log("existingfeatures: ", existingFeatures);
+        await processRecord(recordId);
+        sendToResearcher(recordId);
+        //debugger;
+        // console.log(`Record ${recordId} processed successfully.`);
+        // debugger;
+      }
+
+      console.log("All records processed successfully.");
+      // Additional actions...
+    } catch (error) {
+      console.error("Error processing records:", error);
+    }
+
+    setIsSelectMode(false); // Exit selection mode after confirming send
+    setSelectedRecords({});
+  };
+
+  const handleCancelSend = () => {
+    setSelectedRecords({}); // Clear selected records
+    setIsSelectMode(false); // Exit selection mode
+  };
+
+  const handleCheckboxChange = async (recordId) => {
+    setSelectedRecords((prevSelectedRecords) => ({
+      ...prevSelectedRecords,
+      [recordId]: !prevSelectedRecords[recordId],
+    }));
+  };
+  //console.log("selectedRecords: ", selectedRecords);
+
+  const CheckIfSentExists = async (recordId) => {
+    try {
+      const response = await fetch(`${RECORD_API_URL}/${recordId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        console.log("checking if this record has been sent!");
+        const responseData = await response.json();
+        const recordFeatures = responseData.data.medicalRecord.recordFeatures;
+        return "sent" in recordFeatures;
+      } else {
+        console.log("something went wrong during the checking process.");
+        return false;
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      return false;
+    }
+  };
 
   return (
     <div className="mt-3">
@@ -157,6 +382,33 @@ export const ViewAllMedicalRecord = () => {
               <i className="bi bi-plus"></i>
               Add New Medical Record
             </Link>
+
+            {!isSelectMode && (
+              <button
+                className="btn btn-primary me-2"
+                onClick={handleSelectRecords}
+              >
+                Select Records
+              </button>
+            )}
+
+            {isSelectMode && (
+              <div>
+                <button
+                  className="btn btn-success me-2"
+                  onClick={handleConfirmSend}
+                >
+                  Confirm Send
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={handleCancelSend}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+
             <div className="ms-2">
               <input
                 type="text"
@@ -180,7 +432,9 @@ export const ViewAllMedicalRecord = () => {
             <table className="table table-hover text-color text-center">
               <thead className="table-bordered border-color bg-color custom-bg-text">
                 <tr className="text-center">
-                  <th scope="col">Status</th>
+                  {isSelectMode && <th scope="col">Sent</th>}
+                  <th scope="col">Complete Status</th>
+                  <th scope="col">Healthy Status</th>
                   <th scope="col">Record Id</th>
                   <th scope="col">Patient Id</th>
                   <th scope="col">Patient Name</th>
@@ -200,12 +454,39 @@ export const ViewAllMedicalRecord = () => {
                           medicalRecord.recordFeatures[key] !== "" &&
                           medicalRecord.recordFeatures[key] !== null
                       );
+                  const sentExists = sentStatusDictionary[medicalRecord.id];
+                  //console.log("medicalRecord.id:", medicalRecord.id);
+                  //console.log("sentExists:", sentExists);
                   if (
                     !showIncompleteRecords ||
                     (showIncompleteRecords && !isComplete)
                   ) {
                     return (
                       <tr key={medicalRecord.id}>
+                        {isSelectMode && (
+                          <td>
+                            {sentExists ? (
+                              <span
+                                style={{ color: "green", fontWeight: "bold" }}
+                              >
+                                /
+                              </span>
+                            ) : !isComplete ? (
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                X
+                              </span>
+                            ) : (
+                              <input
+                                type="checkbox"
+                                onChange={() =>
+                                  handleCheckboxChange(medicalRecord.id)
+                                }
+                              />
+                            )}
+                          </td>
+                        )}
                         <td
                           style={{
                             color: isComplete ? "green" : "red",
@@ -213,6 +494,23 @@ export const ViewAllMedicalRecord = () => {
                           }}
                         >
                           {isComplete ? "Complete" : "Incomplete"}
+                        </td>
+                        <td
+                          style={{
+                            color:
+                              healthy === true
+                                ? "green"
+                                : healthy === false
+                                ? "red"
+                                : "gray",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {healthy === true
+                            ? "healthy"
+                            : healthy === false
+                            ? "danger"
+                            : "Pending"}
                         </td>
                         <td>
                           <p>

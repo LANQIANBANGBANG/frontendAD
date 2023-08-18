@@ -13,7 +13,6 @@ export const FeaturesForm = () => {
   const { recordId } = useParams();
   const [patientName, setPatientName] = useState("");
   const [patientId, setPatientId] = useState("");
-  const [healthy, setHealthy] = useState("");
 
   const token = sessionStorage.getItem("auth-token");
 
