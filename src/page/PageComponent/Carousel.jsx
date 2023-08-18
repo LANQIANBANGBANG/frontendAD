@@ -1,7 +1,7 @@
 import React from "react";
-import carousel1 from "../images/hospital_slider.png";
-import carousel2 from "../images/hospital_slider2.png";
-import carousel3 from "../images/hospital_slider3.png";
+import carousel1 from "../../images/s1-copy.jpg";
+import carousel2 from "../../images/s2-copy.jpg";
+import carousel3 from "../../images/s3-copy.jpg";
 
 export const Carousel = () => {
   return (

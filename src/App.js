@@ -25,6 +25,7 @@ export function App() {
         <Route path="/about" element={<ContactUs />} />
         <Route path="/user/login" element={<UserLoginForm />} />
         <Route path="/user/doctor/all" element={<ViewAllDoctor />} />
+        <Route path="/contact-us" element={<ContactUs />} />
         <Route
           path="/user/nurse/all"
           element={<ViewAllUser userType="NURSE" />}
