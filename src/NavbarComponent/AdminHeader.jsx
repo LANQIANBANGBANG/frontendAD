@@ -6,7 +6,7 @@ import { UserLink } from "./UserLink";
 const AdminHeader = () => {
   let navigate = useNavigate();
 
-  const user = JSON.parse(sessionStorage.getItem("active-admin"));
+  //const user = JSON.parse(sessionStorage.getItem("active-admin"));
 
   const adminLogout = () => {
     toast.success("logged out!!!", {

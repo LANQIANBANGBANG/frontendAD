@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 export const ResearcherHeader = () => {
   let navigate = useNavigate();
 
-  const user = JSON.parse(sessionStorage.getItem("active-researcher"));
+  //const user = JSON.parse(sessionStorage.getItem("active-researcher"));
 
   const ResearcherLogout = () => {
     toast.success("logged out!!!", {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "axios";
 import { RECORD_API_URL } from "../config/config";
 import { useNewRecord } from "./newRecord";
 import { toast } from "react-toastify";

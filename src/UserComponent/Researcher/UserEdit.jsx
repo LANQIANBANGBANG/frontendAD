@@ -14,7 +14,7 @@ export const UserEdit = () => {
     password: "",
     role: userType,
   });
-  const token = sessionStorage.getItem("auth-token");
+  //const token = sessionStorage.getItem("auth-token");
   //console.log("token on this page: ", token);
 
   useEffect(() => {

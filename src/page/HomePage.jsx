@@ -2,9 +2,6 @@ import React from "react";
 import { Footer } from "./PageComponent/Footer";
 import { Carousel } from "./PageComponent/Carousel";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-
 export const HomePage = () => {
   return (
     <div className="container-fluid mb-2">

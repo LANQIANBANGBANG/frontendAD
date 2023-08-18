@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const DoctorHeader = () => {
   let navigate = useNavigate();
 
-  const user = JSON.parse(sessionStorage.getItem("active-doctor"));
+  //const user = JSON.parse(sessionStorage.getItem("active-doctor"));
 
   const doctorLogout = () => {
     toast.success("logged out!!!", {

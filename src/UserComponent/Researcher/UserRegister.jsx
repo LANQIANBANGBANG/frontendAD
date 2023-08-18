@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
-import axios from "axios";
 import { GENDERS, SPECIALISTS } from "../../utils/Constant";
 import { REGISTER_API_URL } from "../../config/config";
 import { useParams } from "react-router-dom";
