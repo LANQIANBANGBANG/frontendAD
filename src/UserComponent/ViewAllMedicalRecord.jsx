@@ -89,7 +89,7 @@ export const ViewAllMedicalRecord = () => {
           });
           await Promise.all([
             fetchSentStatusForRecords(recordsWithPatientId),
-            //fetchRecordHealthyData(recordsWithPatientId),
+            fetchRecordHealthyData(recordsWithPatientId),
           ]);
 
           setAllMedicalRecord(recordsWithPatientId);
