@@ -112,7 +112,9 @@ export const AddMedicalRecordPage = () => {
       }, {});
       //console.log("recordFeatureObj: ", recordFeaturesObj);
       const combinedString = `${newRecord.name}-${newRecord.date}`;
-      const hashedString = "L" + CryptoJS.SHA256(combinedString).toString();
+      const hashedString = (
+        "L" + CryptoJS.SHA256(combinedString).toString()
+      ).substring(0, 6);
 
       const postData = {
         name: newRecord.name,

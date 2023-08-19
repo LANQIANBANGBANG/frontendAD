@@ -5,6 +5,6 @@ export const GeneratePatientId = (patientName, recordId) => {
 
   const uniqueId = (
     "L" + `${uuidHash}-${patientName.replace(/\s/g, "").substring(0, 2)}`
-  ).substring(0, 8);
+  ).substring(0, 4);
   return uniqueId;
 };

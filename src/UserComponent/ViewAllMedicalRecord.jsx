@@ -5,7 +5,11 @@ import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { Pagination } from "./Pagination";
-import { RECORD_API_URL, SEND_RESEARCH_URL } from "../config/config";
+import {
+  GET_RESEARCH_URL,
+  RECORD_API_URL,
+  SEND_RESEARCH_URL,
+} from "../config/config";
 //import { GeneratePatientId } from "../utils/GeneratePatientId";
 import { DeleteConfirmation } from "../utils/DeleteCofirmationCheck";
 
@@ -44,7 +48,7 @@ export const ViewAllMedicalRecord = () => {
     for (const medicalRecord of records) {
       try {
         const response = await fetch(
-          `${SEND_RESEARCH_URL}/${medicalRecord.id}`,
+          `${GET_RESEARCH_URL}/${medicalRecord.id}`,
           {
             method: "GET",
             headers: {
@@ -286,6 +290,8 @@ export const ViewAllMedicalRecord = () => {
           "Content-Type": "application/json",
         },
       });
+      console.log("response,", response);
+      debugger;
       if (response.ok) {
         toast.success(`Record ${recordId} Sent Successfully!!!`, {
           position: "top-center",

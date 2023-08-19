@@ -12,5 +12,6 @@ export const REGISTER_API_URL =
 //LOGIN
 export const LOGIN_API_URL = "https://adproj.azurewebsites.net/auth/login";
 //SNEDTORESEARCH
-export const SEND_RESEARCH_URL =
+export const SEND_RESEARCH_URL = "https://adproj.azurewebsites.net/researcher";
+export const GET_RESEARCH_URL =
   "https://adproj.azurewebsites.net/researcher/recordId";
