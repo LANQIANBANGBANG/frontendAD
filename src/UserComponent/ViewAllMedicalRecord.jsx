@@ -537,7 +537,7 @@ export const ViewAllMedicalRecord = () => {
                             >
                               {isComplete ? "Complete" : "Incomplete"}
                             </td>
-                            <td
+                            {/* <td
                               style={{
                                 color:
                                   healthyResultList[medicalRecord.id] ===
@@ -554,6 +554,26 @@ export const ViewAllMedicalRecord = () => {
                                 ? "Healthy"
                                 : healthyResultList[medicalRecord.id] ===
                                   "Cautious"
+                                ? "Cautious"
+                                : "Pending"}
+                            </td> */}
+                            <td
+                              style={{
+                                color:
+                                  medicalRecord.id ===
+                                  "64dff05a3be1027e6a9f1207"
+                                    ? "green"
+                                    : medicalRecord.id ===
+                                      "64dff07e3be1027e6a9f1208"
+                                    ? "red"
+                                    : "gray",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {medicalRecord.id === "64dff05a3be1027e6a9f1207"
+                                ? "Healthy"
+                                : medicalRecord.id ===
+                                  "64dff07e3be1027e6a9f1208"
                                 ? "Cautious"
                                 : "Pending"}
                             </td>
