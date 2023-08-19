@@ -34,6 +34,7 @@ export const ViewAllMedicalRecord = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchIdQuery, setSearchIdQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchingSentMode, setFetchingSentMode] = useState(false); //control the time to load sent status
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -82,6 +83,18 @@ export const ViewAllMedicalRecord = () => {
     }
     setHealthyResultList(healthyStatusDictionary);
   };
+  const fetchSentStatusForRecords = async (records) => {
+    const updatedSentStatusDictionary = {};
+    for (const medicalRecord of records) {
+      try {
+        const sendExists = await CheckIfSentExists(medicalRecord.id);
+        updatedSentStatusDictionary[medicalRecord.id] = sendExists;
+      } catch (error) {
+        console.error("Error checking if sent exists: ", error);
+      }
+    }
+    setSentStatusDictionary(updatedSentStatusDictionary);
+  };
 
   useEffect(() => {
     const getAllMedicalRecord = async () => {
@@ -91,42 +104,32 @@ export const ViewAllMedicalRecord = () => {
           const recordsWithPatientId = allMedicalRecordData.map((record) => {
             return record;
           });
-          await Promise.all([
-            fetchSentStatusForRecords(recordsWithPatientId),
-            fetchRecordHealthyData(recordsWithPatientId),
-          ]);
+          //this is the first version
+          // await Promise.all([
+          //   fetchSentStatusForRecords(recordsWithPatientId),
+          //   fetchRecordHealthyData(recordsWithPatientId),
+          // ]);
 
+          // setAllMedicalRecord(recordsWithPatientId);
+          // setIsLoading(false);
+          //this is the second version
+          //await fetchSentStatusForRecords(recordsWithPatientId);
           setAllMedicalRecord(recordsWithPatientId);
-          //setOriginalDoctorList(recordsWithPatientId);
           setIsLoading(false);
+          //fetchRecordHealthyData(recordsWithPatientId);
+          if (fetchingSentMode) {
+            await fetchSentStatusForRecords(recordsWithPatientId);
+          }
+          fetchRecordHealthyData(recordsWithPatientId);
         }
       } catch (error) {
         console.error("Error retrieving medical records:", error);
         setIsLoading(false);
       }
     };
-    const fetchSentStatusForRecords = async (records) => {
-      const updatedSentStatusDictionary = {};
-      for (const medicalRecord of records) {
-        try {
-          const sendExists = await CheckIfSentExists(medicalRecord.id);
-          updatedSentStatusDictionary[medicalRecord.id] = sendExists;
-          // console.log(
-          //   `Sent status for record ${medicalRecord.id}: ${sendExists}`
-          // );
-        } catch (error) {
-          console.error("Error checking if sent exists: ", error);
-        }
-      }
-      // console.log(
-      //   "Updated sent status dictionary: ",
-      //   updatedSentStatusDictionary
-      // );
-      setSentStatusDictionary(updatedSentStatusDictionary);
-    };
 
     getAllMedicalRecord();
-  }, []);
+  }, [fetchingSentMode]);
 
   const retrieveAllMedicalRecord = async () => {
     try {
@@ -221,20 +224,9 @@ export const ViewAllMedicalRecord = () => {
       if (response.ok) {
         const responseData = await response.json();
         const existingFeatures = responseData.data.medicalRecord.recordFeatures;
-        //console.log("existingfeatureRecord: ", existingFeatures);
-        // const updatedFeatures = {
-        //   ...existingFeatures,
-        //   sent: "true",
-        // };
 
         setFeaturesOfRecord(existingFeatures);
         return existingFeatures;
-        //
-        //console.log("features of record, ", featuresOfRecord);
-        //debugger;
-
-        //console.log("newfeatureRecord: ", featuresOfRecord);
-        //add a feature called "sent":true
       }
     } catch (error) {
       console.error("Error fetching features: ", error);
@@ -264,6 +256,7 @@ export const ViewAllMedicalRecord = () => {
   const [selectedRecords, setSelectedRecords] = useState({}); //store all the records which will be sent to the researcher
 
   const handleSelectRecords = () => {
+    setFetchingSentMode(true);
     setIsSelectMode(true);
   };
 
@@ -336,6 +329,7 @@ export const ViewAllMedicalRecord = () => {
   };
 
   const handleCancelSend = () => {
+    setFetchingSentMode(false);
     setSelectedRecords({}); // Clear selected records
     setIsSelectMode(false); // Exit selection mode
   };
@@ -537,7 +531,7 @@ export const ViewAllMedicalRecord = () => {
                             >
                               {isComplete ? "Complete" : "Incomplete"}
                             </td>
-                            {/* <td
+                            <td
                               style={{
                                 color:
                                   healthyResultList[medicalRecord.id] ===
@@ -554,26 +548,6 @@ export const ViewAllMedicalRecord = () => {
                                 ? "Healthy"
                                 : healthyResultList[medicalRecord.id] ===
                                   "Cautious"
-                                ? "Cautious"
-                                : "Pending"}
-                            </td> */}
-                            <td
-                              style={{
-                                color:
-                                  medicalRecord.id ===
-                                  "64dff05a3be1027e6a9f1207"
-                                    ? "green"
-                                    : medicalRecord.id ===
-                                      "64dff07e3be1027e6a9f1208"
-                                    ? "red"
-                                    : "gray",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {medicalRecord.id === "64dff05a3be1027e6a9f1207"
-                                ? "Healthy"
-                                : medicalRecord.id ===
-                                  "64dff07e3be1027e6a9f1208"
                                 ? "Cautious"
                                 : "Pending"}
                             </td>
